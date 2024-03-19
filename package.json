@@ -1,0 +1,32 @@
+{
+  "name": "konek",
+  "version": "1.0.0",
+  "description": "APLIKASI INTERAKTIF UNTUK PEMILIHAN KEPALA DESA, UMKM, DAN PENGADUAN MASYARAKAT BERBASIS WEB & MOBILE",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghufronakbar/konek-aplikasi-interaktif-untuk-pemilihan-kepala-desa-umkm-dan-pengaduan-masyarakat-berbasis-web.git"
+  },
+  "keywords": [
+    "webserver",
+    "rest",
+    "api",
+    "node",
+    "js",
+    "express",
+    "mysql",
+    "desa",
+    "sistem",
+    "informasi",
+    "desa"
+  ],
+  "author": "ghufronakbar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghufronakbar/konek-aplikasi-interaktif-untuk-pemilihan-kepala-desa-umkm-dan-pengaduan-masyarakat-berbasis-web/issues"
+  },
+  "homepage": "https://github.com/ghufronakbar/konek-aplikasi-interaktif-untuk-pemilihan-kepala-desa-umkm-dan-pengaduan-masyarakat-berbasis-web#readme"
+}
