@@ -4,5 +4,5 @@ var response = require('./res');
 var connection = require('./connection');
 
 exports.index = function(req,res){
-    response.ok("REST API Worked!")
+    response.ok("REST API Worked!",res)
 }
