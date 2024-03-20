@@ -62,6 +62,12 @@ module.exports = function(app)  {
     app.route('/warga/:id')
     .get(jsonku.wargaid);
 
-    app.route('/warga/tambah')
+    app.route('/warga/add')
     .post(jsonku.wargapost);
+
+    app.route('/warga/edit')
+    .put(jsonku.wargaput)
+
+    app.route('/warga/delete')
+    .delete(jsonku.wargadelete)
 }

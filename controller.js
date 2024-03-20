@@ -262,21 +262,55 @@ exports.wargaid = function(req,res){
 
 //POST WARGA
 exports.wargapost = function(req,res){
-    var nik = req.body.nik;
-    var kk = req.body.kk;
-    var nama_lengkap = req.body.nama_lengkap;
-    var tanggal_lahir = req.body.tanggal_lahir;
-    var foto = req.body.foto;
-    var hak_pilih = req.body.hak_pilih;
+    let nik = req.body.nik;
+    let kk = req.body.kk;
+    let nama_lengkap = req.body.nama_lengkap;
+    let tanggal_lahir = req.body.tanggal_lahir;
+    let foto = req.body.foto;
+    let hak_pilih = req.body.hak_pilih;
 
     connection.query('INSERT INTO warga(nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih) VALUES (?,?,?,?,?,?)',
     [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih],
     function(error, rows, fields){
         if(error){
-            response.error("Terjadi Kesalahan",res)
             console.log(error);
         }else{
             response.ok("Berhasil Menginputkan Data!", res)
         };
     })
 };
+
+//PUT WARGA
+exports.wargaput = function(req,res){
+    let warga_id = req.body.warga_id;
+    let nik = req.body.nik;
+    let kk = req.body.kk;
+    let nama_lengkap = req.body.nama_lengkap;
+    let tanggal_lahir = req.body.tanggal_lahir;
+    let foto = req.body.foto;
+    let hak_pilih = req.body.hak_pilih;
+
+    connection.query('UPDATE warga SET nik=?, kk=?, nama_lengkap=?, tanggal_lahir=?, foto=?, hak_pilih=? WHERE warga_id=?',
+    [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih, warga_id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Ubah Data!", res)
+        };
+    })
+};
+
+//DELETE WARGA
+exports.wargadelete = function(req,res){
+    let warga_id = req.body.warga_id;
+    connection.query('DELETE FROM warga WHERE warga_id=?',
+    [warga_id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Menghapus Data!", res)
+        };
+    })
+}
