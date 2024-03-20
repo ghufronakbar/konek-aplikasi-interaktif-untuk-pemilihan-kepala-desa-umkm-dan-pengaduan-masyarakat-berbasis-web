@@ -6,7 +6,6 @@ module.exports = function(app)  {
     app.route('/')
     .get(jsonku.index);
 
-    //BERITA
     app.route('/berita')
     .get(jsonku.berita);
 
@@ -62,4 +61,7 @@ module.exports = function(app)  {
 
     app.route('/warga/:id')
     .get(jsonku.wargaid);
+
+    app.route('/warga/tambah')
+    .post(jsonku.wargapost);
 }

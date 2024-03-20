@@ -25,7 +25,7 @@ exports.berita = function(req,res){
 exports.beritaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM berita WHERE berita_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -34,6 +34,7 @@ exports.beritaid = function(req,res){
     }
     )
 };
+
 
 //CALON KETUA
 exports.calonketua = function(req,res){
@@ -51,7 +52,7 @@ exports.calonketua = function(req,res){
 exports.calonketuaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM calon_ketua WHERE calon_ketua_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -90,7 +91,7 @@ exports.jenisumkm = function(req,res){
 exports.jenisumkmid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM jenis_umkm WHERE jenis_umkm_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -116,7 +117,7 @@ exports.komentar = function(req,res){
 exports.komentarid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM komentar WHERE komentar_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -143,7 +144,7 @@ exports.pemilihanketua = function(req,res){
 exports.pemilihanketuaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM pemilihan_ketua WHERE pemilihan_ketua_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -171,7 +172,7 @@ exports.pengaduanmasyarakat = function(req,res){
 exports.pengaduanmasyarakatid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM pengaduan_masyarakat WHERE pengaduan_masyarakat_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -197,7 +198,7 @@ exports.pengurusdesaanggota = function(req,res){
 exports.pengurusdesaanggotaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -223,7 +224,7 @@ exports.umkm = function(req,res){
 exports.umkmid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM umkm WHERE umkm_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
@@ -250,12 +251,32 @@ exports.warga = function(req,res){
 exports.wargaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM warga WHERE warga_id = ?', [id],
-    function(error,rows, field){
+    function(error,rows, fields){
         if(error){
             connection.log(error);
         }else{
             response.ok(rows,res);
         };
-    }
-    )
+    })
+};
+
+//POST WARGA
+exports.wargapost = function(req,res){
+    var nik = req.body.nik;
+    var kk = req.body.kk;
+    var nama_lengkap = req.body.nama_lengkap;
+    var tanggal_lahir = req.body.tanggal_lahir;
+    var foto = req.body.foto;
+    var hak_pilih = req.body.hak_pilih;
+
+    connection.query('INSERT INTO warga(nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih) VALUES (?,?,?,?,?,?)',
+    [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih],
+    function(error, rows, fields){
+        if(error){
+            response.error("Terjadi Kesalahan",res)
+            console.log(error);
+        }else{
+            response.ok("Berhasil Menginputkan Data!", res)
+        };
+    })
 };
