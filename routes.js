@@ -24,6 +24,15 @@ module.exports = function(app)  {
     app.route('/jenisumkm')
     .get(jsonku.jenisumkm);
 
+    app.route('/jenisumkm/add')
+    .post(jsonku.jenisumkmpost);
+
+    app.route('/jenisumkm/edit')
+    .put(jsonku.jenisumkmput);
+
+    app.route('/jenisumkm/delete')
+    .delete(jsonku.jenisumkmdelete);
+
     app.route('/jenisumkm/:id')
     .get(jsonku.jenisumkmid);
 
@@ -33,11 +42,29 @@ module.exports = function(app)  {
     app.route('/komentar/:id')
     .get(jsonku.komentarid);
 
+    app.route('/komentar/add')
+    .post(jsonku.komentarpost);
+
+    app.route('/komentar/edit')
+    .put(jsonku.komentarput);
+
+    app.route('/komentar/delete')
+    .delete(jsonku.komentardelete);
+
     app.route('/pemilihanketua')
     .get(jsonku.pemilihanketua);
 
     app.route('/pemilihanketua/:id')
     .get(jsonku.pemilihanketuaid);
+
+    app.route('/pemilihanketua/add')
+    .post(jsonku.pemilihanketuapost);
+
+    app.route('/pemilihanketua/edit')
+    .put(jsonku.pemilihanketuaput);
+
+    app.route('/pemilihanketua/delete')
+    .delete(jsonku.pemilihanketuadelete);
 
     app.route('/pengaduanmasyarakat')
     .get(jsonku.pengaduanmasyarakat);
@@ -45,16 +72,44 @@ module.exports = function(app)  {
     app.route('/pengaduanmasyarakat/:id')
     .get(jsonku.pengaduanmasyarakatid);
 
+    app.route('/pengaduanmasyarakat/add')
+    .post(jsonku.pengaduanmasyarakatpost);
+
+    app.route('/pengaduanmasyarakat/edit')
+    .put(jsonku.pengaduanmasyarakatput);
+
+    app.route('/pengaduanmasyarakat/delete')
+    .delete(jsonku.pengaduanmasyarakatdelete);
+
     app.route('/pengurusdesaanggota')
     .get(jsonku.pengurusdesaanggota);
 
     app.route('/pengurusdesaanggota/:id')
     .get(jsonku.pengurusdesaanggotaid);
 
+    app.route('/pengurusdesaanggota/add')
+    .post(jsonku.pengurusdesaanggotapost);
+
+    app.route('/pengurusdesaanggota/edit')
+    .put(jsonku.pengurusdesaanggotaput);
+
+    app.route('/pengurusdesaanggota/delete')
+    .delete(jsonku.pengurusdesaanggotadelete);
+
     app.route('/umkm')
     .get(jsonku.umkm);
+
     app.route('/umkm/:id')
     .get(jsonku.umkmid);
+
+    app.route('/umkm/add')
+    .post(jsonku.umkmpost);
+
+    app.route('/umkm/edit')
+    .put(jsonku.umkmput);
+
+    app.route('/umkm/delete')
+    .delete(jsonku.umkmdelete);
 
     app.route('/warga')
     .get(jsonku.warga);
