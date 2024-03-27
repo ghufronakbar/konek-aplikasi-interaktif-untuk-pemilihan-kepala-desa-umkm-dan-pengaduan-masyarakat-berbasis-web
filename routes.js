@@ -12,14 +12,35 @@ module.exports = function(app)  {
     app.route('/berita/:id')
     .get (jsonku.beritaid)
 
+    app.route('/berita/add')
+    .post(jsonku.beritapost);
+
+    app.route('/berita/edit')
+    .put(jsonku.beritaput);
+
+    app.route('/berita/delete')
+    .delete(jsonku.beritadelete);
+
     app.route('/calonketua')
     .get(jsonku.calonketua);
 
     app.route('/calonketua/:id')
     .get(jsonku.calonketuaid);
+
+    app.route('/calonketua/add')
+    .post(jsonku.calonketuapost);
+
+    app.route('/calonketua/edit')
+    .put(jsonku.calonketuaput);
+
+    app.route('/calonketua/delete')
+    .delete(jsonku.calonketuadelete);
     
     app.route('/informasidesa')
     .get(jsonku.informasidesa);
+
+    app.route('/informasidesa/edit')
+    .put(jsonku.informasidesaput);
 
     app.route('/jenisumkm')
     .get(jsonku.jenisumkm);
@@ -125,4 +146,39 @@ module.exports = function(app)  {
 
     app.route('/warga/delete')
     .delete(jsonku.wargadelete)
+
+    //Custom API
+
+    app.route('/komentarberita')
+    .get(jsonku.komentarberita);
+
+    app.route('/komentarberita/:id')
+    .get(jsonku.komentarberitaid);
+
+    app.route('/pemilihanketuadesa')
+    .get(jsonku.pemilihanketuadesa);
+
+    app.route('/pemilihanketuadesa/periode/:id')
+    .get(jsonku.pemilihanketuadesaid);
+
+    app.route('/pemilihanketuadesa/now')
+    .get(jsonku.pemilihanketuadesanow);
+
+    app.route('/pengaduanmasyarakatwarga')
+    .get(jsonku.pengaduanmasyarakatjoin);
+
+    app.route('/pengaduanmasyarakatwarga/:id')
+    .get(jsonku.pengaduanmasyarakatjoinid);
+
+    app.route('/detailumkm')
+    .get(jsonku.umkmjoin);
+
+    app.route('/detailumkm/:id')
+    .get(jsonku.umkmjoinid);
+
+    app.route('/detailpengurus')
+    .get(jsonku.detailpengurus);
+
+    app.route('/detailpengurus/:id')
+    .get(jsonku.detailpengurusid);
 }

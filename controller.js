@@ -8,8 +8,7 @@ exports.index = function(req,res){
 }
 
 
-//GET DATA
-// BERITA
+//GET BERITA
 exports.berita = function(req,res){
     connection.query('SELECT * FROM berita', function(error, rows, fields){
         if(error){
@@ -21,7 +20,7 @@ exports.berita = function(req,res){
     )
 };
 
-//BERITA ID
+//GET ID BERITA 
 exports.beritaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM berita WHERE berita_id = ?', [id],
@@ -35,8 +34,64 @@ exports.beritaid = function(req,res){
     )
 };
 
+//POST BERITA
+exports.beritapost = function(req,res){
+    let judul = req.body.judul;    
+    let subjudul     = req.body.subjudul;    
+    let tanggal = req.body.tanggal;    
+    let isi = req.body.isi;    
+    let gambar = req.body.gambar;    
+    let publikasi = req.body.publikasi;    
+    let prioritas = req.body.prioritas;    
 
-//CALON KETUA
+    connection.query('INSERT INTO berita (judul,subjudul,tanggal,isi,gambar,publikasi,prioritas) VALUES (?,?,?,?,?,?,?)',
+    [judul,subjudul,tanggal,isi,gambar,publikasi,prioritas],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Menginputkan Berita!", res)
+        };
+    })
+};
+
+//PUT BERITA
+exports.beritaput = function(req,res){
+    let judul = req.body.judul;    
+    let subjudul     = req.body.subjudul;    
+    let tanggal = req.body.tanggal;    
+    let isi = req.body.isi;    
+    let gambar = req.body.gambar;    
+    let publikasi = req.body.publikasi;    
+    let prioritas = req.body.prioritas;   
+    let berita_id = req.body.berita_id; 
+
+    connection.query('UPDATE berita SET judul=?,subjudul=?, tanggal=?, isi=?, gambar=?, publikasi=?, prioritas=? WHERE berita_id=?',
+    [judul,subjudul,tanggal,isi,gambar,publikasi,prioritas,berita_id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Mengedit Berita!", res)
+        };
+    })
+};
+
+//DELETE BERITA
+exports.beritadelete = function(req,res){
+    let berita_id = req.body.berita_id;
+    connection.query('DELETE FROM berita WHERE berita_id=?',
+    [berita_id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Menghapus Berita!", res)
+        };
+    })
+}
+
+//GET CALON KETUA
 exports.calonketua = function(req,res){
     connection.query('SELECT * FROM calon_ketua', function(error, rows, fields){
         if(error){
@@ -48,7 +103,7 @@ exports.calonketua = function(req,res){
     )
 };
 
-//CALON KETUA ID
+//GET ID CALON KETUA
 exports.calonketuaid = function(req,res){
     let id = req.params.id;
     connection.query('SELECT * FROM calon_ketua WHERE calon_ketua_id = ?', [id],
@@ -62,7 +117,58 @@ exports.calonketuaid = function(req,res){
     )
 };
 
-//INFORMASI DESA
+//POST CALON KETUA
+exports.calonketuapost = function(req,res){
+    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;    
+    let warga_id = req.body.warga_id;    
+    let deskripsi = req.body.deskripsi;    
+    let total_pemilih = req.body.total_pemilih;    
+
+    connection.query('INSERT INTO calon_ketua (pemilihan_ketua_id,warga_id,deskripsi,total_pemilih) VALUES (?,?,?,?)',
+    [pemilihan_ketua_id, warga_id, deskripsi, total_pemilih],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Menginputkan Data Calon Ketua!", res)
+        };
+    })
+};
+
+//PUT CALON KETUA
+exports.calonketuaput = function(req,res){
+    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;    
+    let warga_id = req.body.warga_id;    
+    let deskripsi = req.body.deskripsi;    
+    let total_pemilih = req.body.total_pemilih;    
+    let calon_ketua_id = req.body.calon_ketua_id;
+
+    connection.query('UPDATE calon_ketua SET pemilihan_ketua_id=?, warga_id=?, deskripsi=?, total_pemilih=? WHERE calon_ketua_id=?',
+    [pemilihan_ketua_id, warga_id, deskripsi, total_pemilih, calon_ketua_id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Mengedit Data Calon Ketua!", res)
+        };
+    })
+};
+
+//DELETE CALON KETUA
+exports.calonketuadelete = function(req,res){
+    let calon_ketua_id = req.body.calon_ketua_id;
+    connection.query('DELETE FROM calon_ketua WHERE calon_ketua_id=?',
+    [calon_ketua_id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Menghapus Data Calon Ketua!", res)
+        };
+    })
+}
+
+//GET INFORMASI DESA
 exports.informasidesa = function(req,res){
     connection.query('SELECT * FROM informasi_desa', function(error, rows, fields){
         if(error){
@@ -74,8 +180,25 @@ exports.informasidesa = function(req,res){
     )
 };
 
+//PUT INFORMASI DESA
+exports.informasidesaput = function(req,res){
+    let nama_desa = req.body.nama_desa;  
+    let deskripsi = req.body.deskripsi;  
+    let luas_lahan_pertanian = req.body.luas_lahan_pertanian;  
+    let lahan_peternakan = req.body.lahan_peternakan;  
 
-//JENIS UMKM
+    connection.query('UPDATE informasi_desa SET nama_desa=?, deskripsi=?, luas_lahan_pertanian=?, lahan_peternakan=?',
+    [nama_desa, deskripsi, luas_lahan_pertanian, lahan_peternakan],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Mengedit Data Informasi Desa!", res)
+        };
+    })
+};
+
+//GET JENIS UMKM
 exports.jenisumkm = function(req,res){
     connection.query('SELECT * FROM jenis_umkm', function(error, rows, fields){
         if(error){
@@ -626,3 +749,401 @@ exports.wargadelete = function(req,res){
         };
     })
 }
+
+//JOIN KOMENTAR BERITA 
+exports.komentarberita = function(req, res) {    
+    connection.query(
+        `SELECT 
+            b.berita_id, 
+            b.judul, 
+            b.subjudul, 
+            b.tanggal, 
+            b.isi, 
+            b.gambar, 
+            b.publikasi, 
+            b.prioritas,
+            k.komentar_id,
+            k.isi as komentar_isi,
+            k.tanggal as komentar_tanggal,
+            w.warga_id,
+            w.nama_lengkap,
+            w.foto
+        FROM 
+            berita b
+        LEFT JOIN 
+            komentar k ON b.berita_id = k.berita_id
+        LEFT JOIN 
+            warga w ON k.warga_id = w.warga_id`,
+        function(error, rows, fields) {
+            if (error) {
+                console.log(error);
+                response.error("Failed to get comments for news", res);
+            } else {
+                // Lakukan akumulasi data berita dan komentar
+                const hasil = rows.reduce((akumulasikan, item) => {
+                    // Cek jika berita_id sudah ada di dalam hasil
+                    if (akumulasikan[item.berita_id]) {
+                        // Tambahkan komentar ke dalam berita yang sudah ada
+                        akumulasikan[item.berita_id].komentar.push({
+                            komentar_id: item.komentar_id,
+                            isi: item.komentar_isi,
+                            tanggal: item.komentar_tanggal,
+                            warga_id: item.warga_id,
+                            namalengkap: item.nama_lengkap,
+                            foto: item.foto
+                        });
+                    } else {
+                        // Buat objek baru untuk berita dan tambahkan komentar
+                        akumulasikan[item.berita_id] = {
+                            berita_id: item.berita_id,
+                            judul: item.judul,
+                            subjudul: item.subjudul,
+                            tanggal: item.tanggal,
+                            isi: item.isi,
+                            gambar: item.gambar,
+                            publikasi: item.publikasi,
+                            prioritas: item.prioritas,
+                            komentar: [{
+                                komentar_id: item.komentar_id,
+                                isi: item.komentar_isi,
+                                tanggal: item.komentar_tanggal,
+                                warga_id: item.warga_id,
+                                namalengkap: item.nama_lengkap,
+                                foto: item.foto
+                            }]
+                        };
+                    }
+                    return akumulasikan;
+                }, {});
+                
+                // Konversi objek hasil ke dalam array values
+                const values = Object.values(hasil);
+
+                // Response JSON
+                response.ok(values, res);
+            }
+        }
+    );    
+};
+
+//JOIN ID KOMENTAR BERITA 
+exports.komentarberitaid = function(req, res) {
+    let id = req.params.id;
+    connection.query(
+        `SELECT 
+            b.berita_id, 
+            b.judul, 
+            b.subjudul, 
+            b.tanggal, 
+            b.isi, 
+            b.gambar, 
+            b.publikasi, 
+            b.prioritas,
+            k.komentar_id,
+            k.isi as komentar_isi,
+            k.tanggal as komentar_tanggal,
+            w.warga_id,
+            w.nama_lengkap,
+            w.foto
+        FROM 
+            berita b
+        LEFT JOIN 
+            komentar k ON b.berita_id = k.berita_id
+        LEFT JOIN 
+            warga w ON k.warga_id = w.warga_id
+            WHERE b.berita_id=?`,[id],
+        function(error, rows, fields) {
+            if (error) {
+                console.log(error);
+                response.error("Failed to get comments for news", res);
+            } else {
+                // Lakukan akumulasi data berita dan komentar
+                const hasil = rows.reduce((akumulasikan, item) => {
+                    // Cek jika berita_id sudah ada di dalam hasil
+                    if (akumulasikan[item.berita_id]) {
+                        // Tambahkan komentar ke dalam berita yang sudah ada
+                        akumulasikan[item.berita_id].komentar.push({
+                            komentar_id: item.komentar_id,
+                            isi: item.komentar_isi,
+                            tanggal: item.komentar_tanggal,
+                            warga_id: item.warga_id,
+                            namalengkap: item.nama_lengkap,
+                            foto: item.foto
+                        });
+                    } else {
+                        // Buat objek baru untuk berita dan tambahkan komentar
+                        akumulasikan[item.berita_id] = {
+                            berita_id: item.berita_id,
+                            judul: item.judul,
+                            subjudul: item.subjudul,
+                            tanggal: item.tanggal,
+                            isi: item.isi,
+                            gambar: item.gambar,
+                            publikasi: item.publikasi,
+                            prioritas: item.prioritas,
+                            komentar: [{
+                                komentar_id: item.komentar_id,
+                                isi: item.komentar_isi,
+                                tanggal: item.komentar_tanggal,
+                                warga_id: item.warga_id,
+                                namalengkap: item.nama_lengkap,
+                                foto: item.foto
+                            }]
+                        };
+                    }
+                    return akumulasikan;
+                }, {});
+                
+                // Konversi objek hasil ke dalam array values
+                const values = Object.values(hasil);
+
+                // Response JSON
+                response.ok(values, res);
+            }
+        }
+    );    
+};
+
+
+//JOIN PEMILIHAN KETUA
+exports.pemilihanketuadesa = function(req,res){
+    connection.query('SELECT pk.pemilihan_ketua_id, pk.tanggal_mulai, pk.tanggal_selesai, pk.judul, pk.deskripsi, \
+                        ck.calon_ketua_id, ck.warga_id, w.nama_lengkap AS namalengkap, w.nik, w.tanggal_lahir, w.foto, \
+                        ck.deskripsi AS deskripsi_calon, ck.total_pemilih \
+                        FROM pemilihan_ketua pk \
+                        JOIN calon_ketua ck ON pk.pemilihan_ketua_id = ck.pemilihan_ketua_id \
+                        JOIN warga w ON ck.warga_id = w.warga_id',
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            // Lakukan akumulasi
+            const hasil = rows.reduce((akumulasikan, item) => {
+                // Cek jika sudah ada data pemilihan ketua
+                const found = akumulasikan.find(pk => pk.pemilihan_ketua_id === item.pemilihan_ketua_id);
+                if (!found) {
+                    akumulasikan.push({
+                        pemilihan_ketua_id: item.pemilihan_ketua_id,
+                        tanggal_mulai: item.tanggal_mulai,
+                        tanggal_selesai: item.tanggal_selesai,
+                        judul: item.judul,
+                        deskripsi: item.deskripsi,
+                        calon_ketua: [{
+                            calon_ketua_id: item.calon_ketua_id,
+                            warga_id: item.warga_id,
+                            namalengkap: item.namalengkap,
+                            nik: item.nik,
+                            tanggal_lahir: item.tanggal_lahir,
+                            foto: item.foto,
+                            deskripsi_calon: item.deskripsi_calon,
+                            total_pemilih: item.total_pemilih
+                        }]
+                    });
+                } else {
+                    found.calon_ketua.push({
+                        calon_ketua_id: item.calon_ketua_id,
+                        warga_id: item.warga_id,
+                        namalengkap: item.namalengkap,
+                        nik: item.nik,
+                        tanggal_lahir: item.tanggal_lahir,
+                        foto: item.foto,
+                        deskripsi_calon: item.deskripsi_calon,
+                        total_pemilih: item.total_pemilih
+                    });
+                }
+                return akumulasikan;
+            }, []);
+
+            response.ok({ values: hasil }, res);
+        }
+    });
+};
+
+
+//JOIN ID PEMILIHAN KETUA
+exports.pemilihanketuadesaid = function(req,res){
+    let id = req.params.id;
+    connection.query('SELECT pk.pemilihan_ketua_id, pk.tanggal_mulai, pk.tanggal_selesai, pk.judul, pk.deskripsi, \
+                        ck.calon_ketua_id, ck.warga_id, w.nama_lengkap AS namalengkap, w.nik, w.tanggal_lahir, w.foto, \
+                        ck.deskripsi AS deskripsi_calon, ck.total_pemilih \
+                        FROM pemilihan_ketua pk \
+                        JOIN calon_ketua ck ON pk.pemilihan_ketua_id = ck.pemilihan_ketua_id \
+                        JOIN warga w ON ck.warga_id = w.warga_id WHERE pk.pemilihan_ketua_id=?',[id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            // Lakukan akumulasi
+            const hasil = rows.reduce((akumulasikan, item) => {
+                // Cek jika sudah ada data pemilihan ketua
+                const found = akumulasikan.find(pk => pk.pemilihan_ketua_id === item.pemilihan_ketua_id);
+                if (!found) {
+                    akumulasikan.push({
+                        pemilihan_ketua_id: item.pemilihan_ketua_id,
+                        tanggal_mulai: item.tanggal_mulai,
+                        tanggal_selesai: item.tanggal_selesai,
+                        judul: item.judul,
+                        deskripsi: item.deskripsi,
+                        calon_ketua: [{
+                            calon_ketua_id: item.calon_ketua_id,
+                            warga_id: item.warga_id,
+                            namalengkap: item.namalengkap,
+                            nik: item.nik,
+                            tanggal_lahir: item.tanggal_lahir,
+                            foto: item.foto,
+                            deskripsi_calon: item.deskripsi_calon,
+                            total_pemilih: item.total_pemilih
+                        }]
+                    });
+                } else {
+                    found.calon_ketua.push({
+                        calon_ketua_id: item.calon_ketua_id,
+                        warga_id: item.warga_id,
+                        namalengkap: item.namalengkap,
+                        nik: item.nik,
+                        tanggal_lahir: item.tanggal_lahir,
+                        foto: item.foto,
+                        deskripsi_calon: item.deskripsi_calon,
+                        total_pemilih: item.total_pemilih
+                    });
+                }
+                return akumulasikan;
+            }, []);
+
+            response.ok({ values: hasil }, res);
+        }
+    });
+};
+
+//JOIN PEMILIHAN KETUA NOW
+exports.pemilihanketuadesanow = function(req,res){
+    connection.query('SELECT pk.pemilihan_ketua_id, pk.tanggal_mulai, pk.tanggal_selesai, pk.judul, pk.deskripsi, \
+                        ck.calon_ketua_id, ck.warga_id, w.nama_lengkap AS namalengkap, w.nik, w.tanggal_lahir, w.foto, \
+                        ck.deskripsi AS deskripsi_calon, ck.total_pemilih \
+                        FROM pemilihan_ketua pk \
+                        JOIN calon_ketua ck ON pk.pemilihan_ketua_id = ck.pemilihan_ketua_id \
+                        JOIN warga w ON ck.warga_id = w.warga_id \
+                        WHERE pk.pemilihan_ketua_id = (SELECT MAX(pemilihan_ketua_id) FROM pemilihan_ketua \
+                                                        WHERE CURDATE() BETWEEN tanggal_mulai AND tanggal_selesai)',
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            // Lakukan akumulasi
+            const hasil = rows.reduce((akumulasikan, item) => {
+                // Cek jika sudah ada data pemilihan ketua
+                const found = akumulasikan.find(pk => pk.pemilihan_ketua_id === item.pemilihan_ketua_id);
+                if (!found) {
+                    akumulasikan.push({
+                        pemilihan_ketua_id: item.pemilihan_ketua_id,
+                        tanggal_mulai: item.tanggal_mulai,
+                        tanggal_selesai: item.tanggal_selesai,
+                        judul: item.judul,
+                        deskripsi: item.deskripsi,
+                        calon_ketua: [{
+                            calon_ketua_id: item.calon_ketua_id,
+                            warga_id: item.warga_id,
+                            namalengkap: item.namalengkap,
+                            nik: item.nik,
+                            tanggal_lahir: item.tanggal_lahir,
+                            foto: item.foto,
+                            deskripsi_calon: item.deskripsi_calon,
+                            total_pemilih: item.total_pemilih
+                        }]
+                    });
+                } else {
+                    found.calon_ketua.push({
+                        calon_ketua_id: item.calon_ketua_id,
+                        warga_id: item.warga_id,
+                        namalengkap: item.namalengkap,
+                        nik: item.nik,
+                        tanggal_lahir: item.tanggal_lahir,
+                        foto: item.foto,
+                        deskripsi_calon: item.deskripsi_calon,
+                        total_pemilih: item.total_pemilih
+                    });
+                }
+                return akumulasikan;
+            }, []);
+
+            response.ok({ values: hasil }, res);
+        }
+    });
+};
+
+
+// JOIN PENGADUAN MASYARAKAT
+exports.pengaduanmasyarakatjoin = function(req,res){
+    connection.query('SELECT pengaduan_masyarakat.pengaduan_masyarakat_id, warga.warga_id, warga.nik, warga.nama_lengkap, pengaduan_masyarakat.subjek, pengaduan_masyarakat.isi, pengaduan_masyarakat.tanggal from pengaduan_masyarakat JOIN warga WHERE pengaduan_masyarakat.warga_id = warga.warga_id ORDER BY pengaduan_masyarakat.pengaduan_masyarakat_id', function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
+
+// JOIN ID PENGADUAN MASYARAKAT
+exports.pengaduanmasyarakatjoinid = function(req,res){
+    let id = req.params.id;
+    connection.query('SELECT pengaduan_masyarakat.pengaduan_masyarakat_id, warga.warga_id, warga.nik, warga.nama_lengkap, pengaduan_masyarakat.subjek, pengaduan_masyarakat.isi, pengaduan_masyarakat.tanggal from pengaduan_masyarakat JOIN warga WHERE pengaduan_masyarakat.warga_id = warga.warga_id AND pengaduan_masyarakat.pengaduan_masyarakat_id=?',[id], function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
+
+// JOIN UMKM
+exports.umkmjoin = function(req,res){
+    connection.query('SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, umkm.approve, umkm.status, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id ORDER BY umkm.umkm_id;', function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
+
+// JOIN ID UMKM
+exports.umkmjoinid = function(req,res){
+    let id = req.params.id
+    connection.query('SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, umkm.approve, umkm.status, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id AND umkm.umkm_id=?',[id], function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
+
+// JOIN PENGURUS DESA
+exports.detailpengurus = function(req,res){
+    connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;', function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
+
+
+// JOIN ID PENGURUS DESA
+exports.detailpengurusid = function(req,res){
+    let id = req.params.id
+    connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id AND pengurus_desa_anggota.pengurus_desa_anggota_id=?;',[id], function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
