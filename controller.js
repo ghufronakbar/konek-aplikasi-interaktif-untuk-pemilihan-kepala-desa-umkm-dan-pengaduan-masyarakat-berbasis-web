@@ -2,6 +2,7 @@
 
 var response = require('./res');
 var connection = require('./connection');
+var md5 = require('md5');
 
 exports.index = function(req,res){
     response.ok("REST API Worked!",res)
@@ -64,10 +65,10 @@ exports.beritaput = function(req,res){
     let gambar = req.body.gambar;    
     let publikasi = req.body.publikasi;    
     let prioritas = req.body.prioritas;   
-    let berita_id = req.body.berita_id; 
+    let id = req.params.id;    
 
     connection.query('UPDATE berita SET judul=?,subjudul=?, tanggal=?, isi=?, gambar=?, publikasi=?, prioritas=? WHERE berita_id=?',
-    [judul,subjudul,tanggal,isi,gambar,publikasi,prioritas,berita_id],
+    [judul,subjudul,tanggal,isi,gambar,publikasi,prioritas,id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -79,9 +80,9 @@ exports.beritaput = function(req,res){
 
 //DELETE BERITA
 exports.beritadelete = function(req,res){
-    let berita_id = req.body.berita_id;
+    let id = req.params.id;
     connection.query('DELETE FROM berita WHERE berita_id=?',
-    [berita_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -122,10 +123,9 @@ exports.calonketuapost = function(req,res){
     let pemilihan_ketua_id = req.body.pemilihan_ketua_id;    
     let warga_id = req.body.warga_id;    
     let deskripsi = req.body.deskripsi;    
-    let total_pemilih = req.body.total_pemilih;    
 
     connection.query('INSERT INTO calon_ketua (pemilihan_ketua_id,warga_id,deskripsi,total_pemilih) VALUES (?,?,?,?)',
-    [pemilihan_ketua_id, warga_id, deskripsi, total_pemilih],
+    [pemilihan_ketua_id, warga_id, deskripsi, 0],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -141,10 +141,10 @@ exports.calonketuaput = function(req,res){
     let warga_id = req.body.warga_id;    
     let deskripsi = req.body.deskripsi;    
     let total_pemilih = req.body.total_pemilih;    
-    let calon_ketua_id = req.body.calon_ketua_id;
+    let id = req.params.id;
 
     connection.query('UPDATE calon_ketua SET pemilihan_ketua_id=?, warga_id=?, deskripsi=?, total_pemilih=? WHERE calon_ketua_id=?',
-    [pemilihan_ketua_id, warga_id, deskripsi, total_pemilih, calon_ketua_id],
+    [pemilihan_ketua_id, warga_id, deskripsi, total_pemilih, id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -156,9 +156,9 @@ exports.calonketuaput = function(req,res){
 
 //DELETE CALON KETUA
 exports.calonketuadelete = function(req,res){
-    let calon_ketua_id = req.body.calon_ketua_id;
+    let id = req.params.id;
     connection.query('DELETE FROM calon_ketua WHERE calon_ketua_id=?',
-    [calon_ketua_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -170,7 +170,7 @@ exports.calonketuadelete = function(req,res){
 
 //GET INFORMASI DESA
 exports.informasidesa = function(req,res){
-    connection.query('SELECT * FROM informasi_desa', function(error, rows, fields){
+    connection.query('SELECT * FROM informasi_desa WHERE informasi_desa_id=(SELECT MAX(informasi_desa_id)from informasi_desa)', function(error, rows, fields){
         if(error){
             connection.log(error);            
         }else{
@@ -226,7 +226,7 @@ exports.jenisumkmid = function(req,res){
 
 //POST JENIS UMKM
 exports.jenisumkmpost = function(req,res){
-    let nama_jenis_umkm = req.body.nama_jenis_umkm;    
+    let nama_jenis_umkm = req.body.nama_jenis_umkm;
 
     connection.query('INSERT INTO jenis_umkm (nama_jenis_umkm) VALUES (?)',
     [nama_jenis_umkm],
@@ -242,10 +242,10 @@ exports.jenisumkmpost = function(req,res){
 //PUT JENIS UMKM
 exports.jenisumkmput = function(req,res){
     let nama_jenis_umkm = req.body.nama_jenis_umkm;  
-    let jenis_umkm_id = req.body.jenis_umkm_id;  
+    let id = req.params.id;
 
     connection.query('UPDATE jenis_umkm SET nama_jenis_umkm=? WHERE jenis_umkm_id=?',
-    [nama_jenis_umkm, jenis_umkm_id],
+    [nama_jenis_umkm, id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -257,9 +257,9 @@ exports.jenisumkmput = function(req,res){
 
 //DELETE JENIS UMKM
 exports.jenisumkmdelete = function(req,res){
-    let jenis_umkm_id = req.body.jenis_umkm_id;
+    let id = req.params.id;
     connection.query('DELETE FROM jenis_umkm WHERE jenis_umkm_id=?',
-    [jenis_umkm_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -272,7 +272,7 @@ exports.jenisumkmdelete = function(req,res){
 
 //GET KOMENTAR
 exports.komentar = function(req,res){
-    connection.query('SELECT * FROM komentar', function(error, rows, fields){
+    connection.query('SELECT komentar.komentar_id, warga.nama_lengkap,berita.judul, komentar.isi, komentar.tanggal FROM komentar JOIN warga JOIN berita WHERE komentar.warga_id = warga.warga_id AND komentar.berita_id = berita.berita_id', function(error, rows, fields){
         if(error){
             connection.log(error);            
         }else{
@@ -285,7 +285,7 @@ exports.komentar = function(req,res){
 //GET ID KOMENTAR 
 exports.komentarid = function(req,res){
     let id = req.params.id;
-    connection.query('SELECT * FROM komentar WHERE komentar_id = ?', [id],
+    connection.query('SELECT komentar.komentar_id, warga.nama_lengkap,berita.judul, komentar.isi, komentar.tanggal FROM komentar JOIN warga JOIN berita WHERE komentar.warga_id = warga.warga_id AND komentar.berita_id = berita.berita_id AND komentar.komentar_id =?', [id],
     function(error,rows, fields){
         if(error){
             connection.log(error);
@@ -321,10 +321,10 @@ exports.komentarput = function(req,res){
     let isi = req.body.isi;
     let tanggal = req.body.tanggal;
     let berita_id = req.body.berita_id;
-    let komentar_id = req.body.komentar_id;
+    let id = req.params.id;
 
     connection.query('UPDATE komentar SET warga_id=?, isi=?, tanggal=?, berita_id=? WHERE komentar_id=?',
-    [warga_id, isi, tanggal, berita_id, komentar_id],
+    [warga_id, isi, tanggal, berita_id, id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -335,10 +335,9 @@ exports.komentarput = function(req,res){
 };
 
 //DELETE KOMENTAR
-exports.komentardelete = function(req,res){
-    let komentar_id = req.body.komentar_id;
-    connection.query('DELETE FROM komentar WHERE komentar_id=?',
-    [komentar_id],
+exports.komentardelete = function(req,res){    
+    let id = req.params.id;
+    connection.query('DELETE FROM komentar WHERE komentar_id=?',[id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -400,7 +399,7 @@ exports.pemilihanketuaput = function(req,res){
     let tanggal_selesai = req.body.tanggal_selesai;
     let judul = req.body.judul;
     let deskripsi = req.body.deskripsi;
-    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;
+    let id = req.params.id;
 
     connection.query('UPDATE pemilihan_ketua SET tanggal_mulai=?, tanggal_selesai=?, judul=?, deskripsi=? WHERE pemilihan_ketua_id=?',
     [tanggal_mulai, tanggal_selesai, judul, deskripsi, pemilihan_ketua_id],
@@ -415,9 +414,9 @@ exports.pemilihanketuaput = function(req,res){
 
 //DELETE PEMILIHAN KETUA
 exports.pemilihanketuadelete = function(req,res){
-    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;
+    let id = req.params.id;
     connection.query('DELETE FROM pemilihan_ketua WHERE pemilihan_ketua_id=?',
-    [pemilihan_ketua_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -479,10 +478,10 @@ exports.pengaduanmasyarakatput = function(req,res){
     let subjek = req.body.subjek;
     let isi = req.body.isi;
     let tanggal = req.body.tanggal;
-    let pengaduan_masyarakat_id = req.body.pengaduan_masyarakat_id;
+    let id = req.params.id;
 
     connection.query('UPDATE pengaduan_masyarakat SET warga_id=?, subjek=?, isi=?, tanggal=? WHERE pengaduan_masyarakat_id=?',
-    [warga_id, subjek, isi, tanggal, pengaduan_masyarakat_id],
+    [warga_id, subjek, isi, tanggal, id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -494,9 +493,9 @@ exports.pengaduanmasyarakatput = function(req,res){
 
 //DELETE PENGADUAN MASYARAKAT
 exports.pengaduanmasyarakatdelete = function(req,res){
-    let pengaduan_masyarakat_id = req.body.pengaduan_masyarakat_id;
+    let id = req.params.id;
     connection.query('DELETE FROM pengaduan_masyarakat WHERE pengaduan_masyarakat_id=?',
-    [pengaduan_masyarakat_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -551,13 +550,12 @@ exports.pengurusdesaanggotapost = function(req,res){
 
 //PUT PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotaput = function(req,res){
-    let pengurus_desa_anggota_id = req.body.pengurus_desa_anggota_id
-    let warga_id = req.body.warga_id;
+    let id = req.params.id;    
     let jabatan = req.body.jabatan;
     let akses_admin = req.body.akses_admin;
 
-    connection.query('UPDATE pengurus_desa_anggota SET warga_id=?, jabatan=?, akses_admin=? WHERE pengurus_desa_anggota_id=?',
-    [warga_id, jabatan, akses_admin, pengurus_desa_anggota_id],
+    connection.query('UPDATE pengurus_desa_anggota SET jabatan=?, akses_admin=? WHERE pengurus_desa_anggota_id=?',
+    [jabatan, akses_admin, id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -570,9 +568,9 @@ exports.pengurusdesaanggotaput = function(req,res){
 
 //DELETE PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotadelete = function(req,res){
-    let pengurus_desa_anggota_id = req.body.pengurus_desa_anggota_id;
+    let id = req.params.id;
     connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
-    [pengurus_desa_anggota_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -632,7 +630,7 @@ exports.umkmpost = function(req,res){
 
 //PUT UMKM
 exports.umkmput = function(req,res){
-    let umkm_id = req.body.umkm_id;
+    let id = req.params.id;
     let nama = req.body.nama;
     let jenis_umkm_id = req.body.jenis_umkm_id;
     let deskripsi = req.body.deskripsi;
@@ -643,7 +641,24 @@ exports.umkmput = function(req,res){
     let warga_id = req.body.warga_id;
 
     connection.query('UPDATE umkm SET nama=?, jenis_umkm_id=?, deskripsi=?, gambar=?, lokasi=?, approve=?, status=?, warga_id=? WHERE umkm_id=?',
-    [nama,jenis_umkm_id,deskripsi,gambar,lokasi,approve,status,warga_id,umkm_id],
+    [nama,jenis_umkm_id,deskripsi,gambar,lokasi,approve,status,warga_id,id],
+    function(error, rows, fields){
+        if(error){
+            console.log(error);
+        }else{
+            response.ok("Berhasil Mengedit Data UMKM!", res)
+        };
+    })
+};
+
+//PUT UMKM
+exports.umkmputapprove = function(req,res){
+    let id = req.params.id;    
+    let approve = req.body.approve;
+    
+
+    connection.query('UPDATE umkm SET approve=? WHERE umkm_id=?',
+    [approve,id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -655,9 +670,9 @@ exports.umkmput = function(req,res){
 
 //DELETE UMKM
 exports.umkmdelete = function(req,res){
-    let umkm_id = req.body.umkm_id;
+    let id = req.params.id;
     connection.query('DELETE FROM umkm WHERE umkm_id=?',
-    [umkm_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -698,13 +713,11 @@ exports.wargapost = function(req,res){
     let nik = req.body.nik;
     let kk = req.body.kk;
     let nama_lengkap = req.body.nama_lengkap;
-    let tanggal_lahir = req.body.tanggal_lahir;
-    let foto = req.body.foto;
-    let hak_pilih = req.body.hak_pilih;
-    let password = req.body.password;
+    let tanggal_lahir = req.body.tanggal_lahir;    
+    let password = md5(req.body.kk);
 
     connection.query('INSERT INTO warga(nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih, password) VALUES (?,?,?,?,?,?,?)',
-    [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih,password],
+    [nik, kk, nama_lengkap, tanggal_lahir, "default.jpg", "0",password],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -716,7 +729,7 @@ exports.wargapost = function(req,res){
 
 //PUT WARGA
 exports.wargaput = function(req,res){
-    let warga_id = req.body.warga_id;
+    let id = req.params.id;
     let nik = req.body.nik;
     let kk = req.body.kk;
     let nama_lengkap = req.body.nama_lengkap;
@@ -726,7 +739,7 @@ exports.wargaput = function(req,res){
     let password = req.body.password;
 
     connection.query('UPDATE warga SET nik=?, kk=?, nama_lengkap=?, tanggal_lahir=?, foto=?, hak_pilih=?, password=? WHERE warga_id=?',
-    [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih,password, warga_id],
+    [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih,password, id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -738,9 +751,9 @@ exports.wargaput = function(req,res){
 
 //DELETE WARGA
 exports.wargadelete = function(req,res){
-    let warga_id = req.body.warga_id;
+    let id = req.params.id;
     connection.query('DELETE FROM warga WHERE warga_id=?',
-    [warga_id],
+    [id],
     function(error, rows, fields){
         if(error){
             console.log(error);
@@ -1125,6 +1138,18 @@ exports.umkmjoinid = function(req,res){
 // JOIN PENGURUS DESA
 exports.detailpengurus = function(req,res){
     connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;', function(error, rows, fields){
+        if(error){
+            console.log(error);            
+        }else{
+            response.ok(rows, res)
+        };
+    }
+    )
+};
+
+// AUTH ADMIN DESA
+exports.adminauth = function(req,res){
+    connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.nik, pengurus_desa_anggota.akses_admin, warga.password FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id', function(error, rows, fields){
         if(error){
             console.log(error);            
         }else{

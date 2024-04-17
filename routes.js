@@ -15,10 +15,10 @@ module.exports = function(app)  {
     app.route('/api/berita/add')
     .post(jsonku.beritapost);
 
-    app.route('/api/berita/edit')
+    app.route('/api/berita/edit/:id')
     .put(jsonku.beritaput);
 
-    app.route('/api/berita/delete')
+    app.route('/api/berita/delete/:id')
     .delete(jsonku.beritadelete);
 
     app.route('/api/calonketua')
@@ -30,10 +30,10 @@ module.exports = function(app)  {
     app.route('/api/calonketua/add')
     .post(jsonku.calonketuapost);
 
-    app.route('/api/calonketua/edit')
+    app.route('/api/calonketua/edit/:id')
     .put(jsonku.calonketuaput);
 
-    app.route('/api/calonketua/delete')
+    app.route('/api/calonketua/delete/:id')
     .delete(jsonku.calonketuadelete);
     
     app.route('/api/informasidesa')
@@ -43,15 +43,15 @@ module.exports = function(app)  {
     .put(jsonku.informasidesaput);
 
     app.route('/api/jenisumkm')
-    .get(jsonku.jenisumkm);
+    .get(jsonku.jenisumkm);    
 
     app.route('/api/jenisumkm/add')
     .post(jsonku.jenisumkmpost);
 
-    app.route('/api/jenisumkm/edit')
+    app.route('/api/jenisumkm/edit/:id')
     .put(jsonku.jenisumkmput);
 
-    app.route('/api/jenisumkm/delete')
+    app.route('/api/jenisumkm/delete/:id')
     .delete(jsonku.jenisumkmdelete);
 
     app.route('/api/jenisumkm/:id')
@@ -66,10 +66,10 @@ module.exports = function(app)  {
     app.route('/api/komentar/add')
     .post(jsonku.komentarpost);
 
-    app.route('/api/komentar/edit')
+    app.route('/api/komentar/edit/:id')
     .put(jsonku.komentarput);
 
-    app.route('/api/komentar/delete')
+    app.route('/api/komentar/delete/:id')
     .delete(jsonku.komentardelete);
 
     app.route('/api/pemilihanketua')
@@ -81,10 +81,10 @@ module.exports = function(app)  {
     app.route('/api/pemilihanketua/add')
     .post(jsonku.pemilihanketuapost);
 
-    app.route('/api/pemilihanketua/edit')
+    app.route('/api/pemilihanketua/edit/:id')
     .put(jsonku.pemilihanketuaput);
 
-    app.route('/api/pemilihanketua/delete')
+    app.route('/api/pemilihanketua/delete/:id')
     .delete(jsonku.pemilihanketuadelete);
 
     app.route('/api/pengaduanmasyarakat')
@@ -96,10 +96,10 @@ module.exports = function(app)  {
     app.route('/api/pengaduanmasyarakat/add')
     .post(jsonku.pengaduanmasyarakatpost);
 
-    app.route('/api/pengaduanmasyarakat/edit')
+    app.route('/api/pengaduanmasyarakat/edit/:id')
     .put(jsonku.pengaduanmasyarakatput);
 
-    app.route('/api/pengaduanmasyarakat/delete')
+    app.route('/api/pengaduanmasyarakat/delete/:id')
     .delete(jsonku.pengaduanmasyarakatdelete);
 
     app.route('/api/pengurusdesaanggota')
@@ -111,10 +111,10 @@ module.exports = function(app)  {
     app.route('/api/pengurusdesaanggota/add')
     .post(jsonku.pengurusdesaanggotapost);
 
-    app.route('/api/pengurusdesaanggota/edit')
+    app.route('/api/pengurusdesaanggota/edit/:id')
     .put(jsonku.pengurusdesaanggotaput);
 
-    app.route('/api/pengurusdesaanggota/delete')
+    app.route('/api/pengurusdesaanggota/delete/:id')
     .delete(jsonku.pengurusdesaanggotadelete);
 
     app.route('/api/umkm')
@@ -123,13 +123,20 @@ module.exports = function(app)  {
     app.route('/api/umkm/:id')
     .get(jsonku.umkmid);
 
+    app.route('/api/umkm/:id')
+    .get(jsonku.umkmid);
+
     app.route('/api/umkm/add')
     .post(jsonku.umkmpost);
 
-    app.route('/api/umkm/edit')
+    app.route('/api/umkm/edit/:id')
     .put(jsonku.umkmput);
 
-    app.route('/api/umkm/delete')
+    //APPROVE UMKM
+    app.route('/api/umkm/approve/:id')
+    .put(jsonku.umkmputapprove);
+
+    app.route('/api/umkm/delete/:id')
     .delete(jsonku.umkmdelete);
 
     app.route('/api/warga')
@@ -138,13 +145,13 @@ module.exports = function(app)  {
     app.route('/api/warga/:id')
     .get(jsonku.wargaid);
 
-    // app.route('/api/warga/add')
-    // .post(jsonku.wargapost);
+    app.route('/api/warga/add')
+    .post(jsonku.wargapost);
 
-    app.route('/api/warga/edit')
+    app.route('/api/warga/edit/:id')
     .put(jsonku.wargaput)
 
-    app.route('/api/warga/delete')
+    app.route('/api/warga/delete/:id')
     .delete(jsonku.wargadelete)
 
     //Custom API
@@ -178,6 +185,9 @@ module.exports = function(app)  {
 
     app.route('/api/detailpengurus')
     .get(jsonku.detailpengurus);
+
+    app.route('/api/admin/auth')
+    .get(jsonku.adminauth);
 
     app.route('/api/detailpengurus/:id')
     .get(jsonku.detailpengurusid);
