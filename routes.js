@@ -1,25 +1,144 @@
 'use strict';
 
-module.exports = function(app)  {
+module.exports = function(app)  {    
     var jsonku = require('./controller');
+    const verifikasi = require('./middleware/verifikasi');
+    
 
     app.route('/')
     .get(jsonku.index);
-
+    
+    //API DASHBOARD ADMIN
+    //BERITA //tambah fungsi publik prioritas
     app.route('/api/berita')
-    .get(jsonku.berita);
+    .get(jsonku.berita);    //
 
-    app.route('/api/berita/:id')
+    app.route('/api/berita/:id') // 
     .get (jsonku.beritaid)
 
     app.route('/api/berita/add')
-    .post(jsonku.beritapost);
+    .post(jsonku.beritapost); //
 
     app.route('/api/berita/edit/:id')
-    .put(jsonku.beritaput);
+    .put(jsonku.beritaput); //
 
     app.route('/api/berita/delete/:id')
-    .delete(jsonku.beritadelete);
+    .delete(jsonku.beritadelete); //
+
+    app.route('/api/berita/publikasi/:id')
+    .put(jsonku.beritapublikasi); //
+
+    app.route('/api/berita/prioritas/:id')
+    .put(jsonku.beritaprioritas); //
+
+
+    //INFORMASI DESA
+    app.route('/api/informasidesa')
+    .get(jsonku.informasidesa);
+
+    app.route('/api/informasidesa/edit')
+    .put(jsonku.informasidesaput);
+
+
+    //KOMENTAR
+    app.route('/api/komentar')
+    .get(jsonku.komentar); //
+
+    app.route('/api/komentar/delete/:id')
+    .delete(jsonku.komentardelete); //
+
+    
+    
+
+
+    //PENGADUAN MASYARAKAT
+    app.route('/api/pengaduanmasyarakatwarga')
+    .get(jsonku.pengaduanmasyarakatjoin);
+
+    app.route('/api/pengaduanmasyarakatwarga/:id')
+    .get(jsonku.pengaduanmasyarakatjoinid);
+
+
+    //PENGURUS DESA
+    //Tambahkan fungsi put akses_admin 1 0
+    app.route('/api/pengurusdesa')
+    .get(jsonku.detailpengurus); //
+
+    app.route('/api/pengurusdesa/:id')
+    .get(jsonku.detailpengurusid);
+
+    app.route('/api/pengurusdesa/add')
+    .post(jsonku.pengurusdesaanggotapost);
+
+    app.route('/api/pengurusdesa/edit/:id')
+    .put(jsonku.pengurusdesaanggotaput);
+
+    app.route('/api/pengurusdesa/delete/:id')
+    .delete(jsonku.pengurusdesaanggotadelete); //
+
+
+    //UMKM
+    app.route('/api/umkm/approve/:id')
+    .put(jsonku.umkmputapprove);
+
+    app.route('/api/umkm/delete/:id')
+    .delete(jsonku.umkmdelete); //
+    
+    app.route('/api/umkm')
+    .get(jsonku.umkmjoin); //
+
+    app.route('/api/umkm/:id')
+    .get(jsonku.umkmjoinid);
+
+
+    //JENIS UMKM
+    
+    app.route('/api/jenisumkm')
+    .get(jsonku.jenisumkm);    //
+
+    app.route('/api/jenisumkm/add')
+    .post(jsonku.jenisumkmpost);
+
+    app.route('/api/jenisumkm/edit/:id')
+    .put(jsonku.jenisumkmput); //
+
+    app.route('/api/jenisumkm/delete/:id')
+    .delete(jsonku.jenisumkmdelete); //
+
+    app.route('/api/jenisumkm/:id')
+    .get(jsonku.jenisumkmid); //
+
+
+
+    //WARGA
+    app.route('/api/warga')
+    .get(jsonku.warga); //
+
+    app.route('/api/warga/:id')
+    .get(jsonku.wargaid); //Ubah agar menampilkan mempunyai umkm apa saja
+
+    app.route('/api/warga/add')
+    .post(jsonku.wargapost);
+
+    app.route('/api/warga/edit/:id')
+    .put(jsonku.wargaput)
+
+    app.route('/api/warga/delete/:id')
+    .delete(jsonku.wargadelete) //
+
+
+
+
+
+
+
+
+
+
+    
+    app.route('/api/admin/auth')
+    .get(jsonku.adminauth);
+
 
     app.route('/api/calonketua')
     .get(jsonku.calonketua);
@@ -36,32 +155,8 @@ module.exports = function(app)  {
     app.route('/api/calonketua/delete/:id')
     .delete(jsonku.calonketuadelete);
     
-    app.route('/api/informasidesa')
-    .get(jsonku.informasidesa);
 
-    app.route('/api/informasidesa/edit')
-    .put(jsonku.informasidesaput);
 
-    app.route('/api/jenisumkm')
-    .get(jsonku.jenisumkm);    
-
-    app.route('/api/jenisumkm/add')
-    .post(jsonku.jenisumkmpost);
-
-    app.route('/api/jenisumkm/edit/:id')
-    .put(jsonku.jenisumkmput);
-
-    app.route('/api/jenisumkm/delete/:id')
-    .delete(jsonku.jenisumkmdelete);
-
-    app.route('/api/jenisumkm/:id')
-    .get(jsonku.jenisumkmid);
-
-    app.route('/api/komentar')
-    .get(jsonku.komentar);
-
-    app.route('/api/komentar/:id')
-    .get(jsonku.komentarid);
 
     app.route('/api/komentar/add')
     .post(jsonku.komentarpost);
@@ -69,8 +164,7 @@ module.exports = function(app)  {
     app.route('/api/komentar/edit/:id')
     .put(jsonku.komentarput);
 
-    app.route('/api/komentar/delete/:id')
-    .delete(jsonku.komentardelete);
+
 
     app.route('/api/pemilihanketua')
     .get(jsonku.pemilihanketua);
@@ -87,8 +181,7 @@ module.exports = function(app)  {
     app.route('/api/pemilihanketua/delete/:id')
     .delete(jsonku.pemilihanketuadelete);
 
-    app.route('/api/pengaduanmasyarakat')
-    .get(jsonku.pengaduanmasyarakat);
+
 
     app.route('/api/pengaduanmasyarakat/:id')
     .get(jsonku.pengaduanmasyarakatid);
@@ -102,26 +195,7 @@ module.exports = function(app)  {
     app.route('/api/pengaduanmasyarakat/delete/:id')
     .delete(jsonku.pengaduanmasyarakatdelete);
 
-    app.route('/api/pengurusdesaanggota')
-    .get(jsonku.pengurusdesaanggota);
 
-    app.route('/api/pengurusdesaanggota/:id')
-    .get(jsonku.pengurusdesaanggotaid);
-
-    app.route('/api/pengurusdesaanggota/add')
-    .post(jsonku.pengurusdesaanggotapost);
-
-    app.route('/api/pengurusdesaanggota/edit/:id')
-    .put(jsonku.pengurusdesaanggotaput);
-
-    app.route('/api/pengurusdesaanggota/delete/:id')
-    .delete(jsonku.pengurusdesaanggotadelete);
-
-    app.route('/api/umkm')
-    .get(jsonku.umkm);
-
-    app.route('/api/umkm/:id')
-    .get(jsonku.umkmid);
 
     app.route('/api/umkm/:id')
     .get(jsonku.umkmid);
@@ -133,34 +207,33 @@ module.exports = function(app)  {
     .put(jsonku.umkmput);
 
     //APPROVE UMKM
-    app.route('/api/umkm/approve/:id')
-    .put(jsonku.umkmputapprove);
-
-    app.route('/api/umkm/delete/:id')
-    .delete(jsonku.umkmdelete);
-
-    app.route('/api/warga')
-    .get(jsonku.warga);
-
-    app.route('/api/warga/:id')
-    .get(jsonku.wargaid);
-
-    app.route('/api/warga/add')
-    .post(jsonku.wargapost);
-
-    app.route('/api/warga/edit/:id')
-    .put(jsonku.wargaput)
-
-    app.route('/api/warga/delete/:id')
-    .delete(jsonku.wargadelete)
 
     //Custom API
 
-    app.route('/api/komentarberita')
-    .get(jsonku.komentarberita);
 
-    app.route('/api/komentarberita/:id')
-    .get(jsonku.komentarberitaid);
+    //Phone
+
+    app.route('/api/published/berita')
+    .get(jsonku.beritapublished);
+
+    app.route('/api/published/berita/:id')
+    .get(jsonku.beritapublishedid);
+
+    app.route('/api/published/umkm')
+    .get(jsonku.umkmpublished);
+
+    app.route('/api/published/umkm/:id')
+    .get(jsonku.umkmpublishedid);
+
+    app.route('/api/published/informasidesa')
+    .get(jsonku.informasidesapublished);
+
+    app.route('/api/published/pengurusdesa')
+    .get(jsonku.penguruspublished);
+
+    //Phone
+
+
 
     app.route('/api/pemilihanketuadesa')
     .get(jsonku.pemilihanketuadesa);
@@ -171,24 +244,15 @@ module.exports = function(app)  {
     app.route('/api/pemilihanketuadesa/now')
     .get(jsonku.pemilihanketuadesanow);
 
-    app.route('/api/pengaduanmasyarakatwarga')
-    .get(jsonku.pengaduanmasyarakatjoin);
 
-    app.route('/api/pengaduanmasyarakatwarga/:id')
-    .get(jsonku.pengaduanmasyarakatjoinid);
 
-    app.route('/api/detailumkm')
-    .get(jsonku.umkmjoin);
 
-    app.route('/api/detailumkm/:id')
-    .get(jsonku.umkmjoinid);
+    app.route('/api/komentarberita')
+    .get(jsonku.komentarberita);
 
-    app.route('/api/detailpengurus')
-    .get(jsonku.detailpengurus);
+    app.route('/api/komentarberita/:id')
+    .get(jsonku.komentarberitaid);
 
-    app.route('/api/admin/auth')
-    .get(jsonku.adminauth);
 
-    app.route('/api/detailpengurus/:id')
-    .get(jsonku.detailpengurusid);
+   
 }
