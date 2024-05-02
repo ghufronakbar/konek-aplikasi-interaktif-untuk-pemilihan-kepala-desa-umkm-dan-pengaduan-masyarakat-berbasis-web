@@ -10,12 +10,11 @@ exports.ok = function(values,res){
      
 }
 
-exports.error = function(values,res){
-    var data ={
+exports.error = function( message, res) {
+    var error = {
         'status':400,
-        'values':values
+        message: message
     };
 
-     res.json(data);
-     
-}
+    res.status(400).json({ error: error });
+};

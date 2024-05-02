@@ -1,258 +1,286 @@
 'use strict';
 
-module.exports = function(app)  {    
-    var jsonku = require('./controller');
+module.exports = function (app) {
+    var api_admin = require('./controllers/admin');
     const verifikasi = require('./middleware/verifikasi');
-    
 
-    app.route('/')
-    .get(jsonku.index);
-    
+
     //API DASHBOARD ADMIN
-    //BERITA //tambah fungsi publik prioritas
-    app.route('/api/berita')
-    .get(jsonku.berita);    //
+    //BERITA
+    app.route('/api/admin/berita')
+        .get(api_admin.berita_controller.berita);    //
 
-    app.route('/api/berita/:id') // 
-    .get (jsonku.beritaid)
+    app.route('/api/admin/berita/:id') // 
+        .get(api_admin.berita_controller.beritaid)
 
-    app.route('/api/berita/add')
-    .post(jsonku.beritapost); //
+    app.route('/api/admin/berita/add')
+        .post(api_admin.berita_controller.beritapost); //
 
-    app.route('/api/berita/edit/:id')
-    .put(jsonku.beritaput); //
+    app.route('/api/admin/berita/edit/:id')
+        .put(api_admin.berita_controller.beritaput); //
 
-    app.route('/api/berita/delete/:id')
-    .delete(jsonku.beritadelete); //
+    app.route('/api/admin/berita/delete/:id')
+        .delete(api_admin.berita_controller.beritadelete); //
 
-    app.route('/api/berita/publikasi/:id')
-    .put(jsonku.beritapublikasi); //
+    app.route('/api/admin/berita/publikasi/:id')
+        .put(api_admin.berita_controller.beritapublikasi); //
 
-    app.route('/api/berita/prioritas/:id')
-    .put(jsonku.beritaprioritas); //
+    app.route('/api/admin/berita/prioritas/:id')
+        .put(api_admin.berita_controller.beritapublikasi); //
 
 
     //INFORMASI DESA
-    app.route('/api/informasidesa')
-    .get(jsonku.informasidesa);
+    app.route('/api/admin/informasidesa')
+        .get(api_admin.informasi_desa_controller.informasidesa); //
 
-    app.route('/api/informasidesa/edit')
-    .put(jsonku.informasidesaput);
+    app.route('/api/admin/informasidesa/edit')
+        .put(api_admin.informasi_desa_controller.informasidesaput); //
 
 
     //KOMENTAR
-    app.route('/api/komentar')
-    .get(jsonku.komentar); //
+    app.route('/api/admin/komentar')
+        .get(api_admin.komentar_controller.komentar); //
 
-    app.route('/api/komentar/delete/:id')
-    .delete(jsonku.komentardelete); //
+    app.route('/api/admin/komentar/delete/:id')
+        .delete(api_admin.komentar_controller.komentardelete); //
 
-    
-    
 
+    // //PENGADUAN MASYARAKAT
+    app.route('/api/admin/pengaduanmasyarakat')
+        .get(api_admin.pengaduan_masyarakat_controller.pengaduanmasyarakatjoin); //
 
-    //PENGADUAN MASYARAKAT
-    app.route('/api/pengaduanmasyarakatwarga')
-    .get(jsonku.pengaduanmasyarakatjoin);
+    app.route('/api/admin/pengaduanmasyarakat/:id')
+        .get(api_admin.pengaduan_masyarakat_controller.pengaduanmasyarakatjoinid); //
 
-    app.route('/api/pengaduanmasyarakatwarga/:id')
-    .get(jsonku.pengaduanmasyarakatjoinid);
+    app.route('/api/admin/pengaduanmasyarakat/delete/:id')
+        .delete(api_admin.pengaduan_masyarakat_controller.pengaduanmasyarakatdelete); //
 
 
-    //PENGURUS DESA
-    //Tambahkan fungsi put akses_admin 1 0
-    app.route('/api/pengurusdesa')
-    .get(jsonku.detailpengurus); //
+    // //PENGURUS DESA
+    app.route('/api/admin/pengurusdesa')
+        .get(api_admin.pengurus_desa_controller.detailpengurus); //
 
-    app.route('/api/pengurusdesa/:id')
-    .get(jsonku.detailpengurusid);
+    app.route('/api/admin/pengurusdesa/:id')
+        .get(api_admin.pengurus_desa_controller.detailpengurusid); //
 
-    app.route('/api/pengurusdesa/add')
-    .post(jsonku.pengurusdesaanggotapost);
+    app.route('/api/admin/pengurusdesa/add')
+        .post(api_admin.pengurus_desa_controller.pengurusdesaanggotapost);
 
-    app.route('/api/pengurusdesa/edit/:id')
-    .put(jsonku.pengurusdesaanggotaput);
+    app.route('/api/admin/pengurusdesa/edit/:id')
+        .put(api_admin.pengurus_desa_controller.pengurusdesaanggotaput); //
 
-    app.route('/api/pengurusdesa/delete/:id')
-    .delete(jsonku.pengurusdesaanggotadelete); //
+    app.route('/api/admin/pengurusdesa/delete/:id')
+        .delete(api_admin.pengurus_desa_controller.pengurusdesaanggotadelete); //
 
+    app.route('/api/admin/pengurusdesa/akses/:id')
+        .put(api_admin.pengurus_desa_controller.pengurusdesaanggotaakses); //
 
-    //UMKM
-    app.route('/api/umkm/approve/:id')
-    .put(jsonku.umkmputapprove);
 
-    app.route('/api/umkm/delete/:id')
-    .delete(jsonku.umkmdelete); //
-    
-    app.route('/api/umkm')
-    .get(jsonku.umkmjoin); //
+    // //UMKM
+    app.route('/api/admin/umkm')
+        .get(api_admin.umkm_controller.umkmjoin); //
 
-    app.route('/api/umkm/:id')
-    .get(jsonku.umkmjoinid);
+    app.route('/api/admin/umkm/:id')
+        .get(api_admin.umkm_controller.umkmjoinid);
 
+    app.route('/api/admin/umkm/delete/:id')
+        .delete(api_admin.umkm_controller.umkmdelete); //
 
-    //JENIS UMKM
-    
-    app.route('/api/jenisumkm')
-    .get(jsonku.jenisumkm);    //
+    app.route('/api/admin/umkm/approve/:id')
+        .put(api_admin.umkm_controller.umkmputapprove); //
 
-    app.route('/api/jenisumkm/add')
-    .post(jsonku.jenisumkmpost);
 
-    app.route('/api/jenisumkm/edit/:id')
-    .put(jsonku.jenisumkmput); //
+    // //JENIS UMKM
+    app.route('/api/admin/jenisumkm')
+        .get(api_admin.umkm_controller.jenisumkm);    //
 
-    app.route('/api/jenisumkm/delete/:id')
-    .delete(jsonku.jenisumkmdelete); //
+    app.route('/api/admin/jenisumkm/add')
+        .post(api_admin.umkm_controller.jenisumkmpost); //
 
-    app.route('/api/jenisumkm/:id')
-    .get(jsonku.jenisumkmid); //
+    app.route('/api/admin/jenisumkm/edit/:id')
+        .put(api_admin.umkm_controller.jenisumkmput); //
 
+    app.route('/api/admin/jenisumkm/delete/:id')
+        .delete(api_admin.umkm_controller.jenisumkmdelete); //
 
+    app.route('/api/admin/jenisumkm/:id')
+        .get(api_admin.umkm_controller.jenisumkmid); //
 
-    //WARGA
-    app.route('/api/warga')
-    .get(jsonku.warga); //
 
-    app.route('/api/warga/:id')
-    .get(jsonku.wargaid); //Ubah agar menampilkan mempunyai umkm apa saja
 
-    app.route('/api/warga/add')
-    .post(jsonku.wargapost);
+    // //WARGA
+    app.route('/api/admin/warga')
+        .get(api_admin.warga_controller.warga); //
 
-    app.route('/api/warga/edit/:id')
-    .put(jsonku.wargaput)
+    app.route('/api/admin/warga/:id')
+        .get(api_admin.warga_controller.wargaid); //
 
-    app.route('/api/warga/delete/:id')
-    .delete(jsonku.wargadelete) //
+    app.route('/api/admin/warga/add')
+        .post(api_admin.warga_controller.wargapost); //
 
+    app.route('/api/admin/warga/edit/:id') //
+        .put(api_admin.warga_controller.wargaput) //
 
+    app.route('/api/admin/warga/delete/:id')
+        .delete(api_admin.warga_controller.wargadelete) //
 
 
 
+    //PEMILIHAN KETUA
+    app.route('/api/admin/pemilihankepaladesa')
+        .get(api_admin.pemilihan_ketua_controller.pemilihanketuadesa);
 
+    app.route('/api/admin/pemilihankepaladesa/detail/:id')
+        .get(api_admin.pemilihan_ketua_controller.pemilihanketuadesaid);
 
+    app.route('/api/admin/pemilihankepaladesa/add')
+        .post(api_admin.pemilihan_ketua_controller.pemilihanketuapost); //validasi tanggal
 
+    app.route('/api/admin/pemilihankepaladesa/edit/:id')
+        .put(api_admin.pemilihan_ketua_controller.pemilihanketuaput); //validasi tanggal
 
+    app.route('/api/admin/pemilihankepaladesa/delete/:id')
+        .delete(api_admin.pemilihan_ketua_controller.pemilihanketuadelete);
 
-    
-    app.route('/api/admin/auth')
-    .get(jsonku.adminauth);
+    app.route('/api/admin/calonketua')
+        .get(api_admin.pemilihan_ketua_controller.calonketua);
 
+    app.route('/api/admin/calonketua/detail/:id')
+        .get(api_admin.pemilihan_ketua_controller.calonketuaid);
 
-    app.route('/api/calonketua')
-    .get(jsonku.calonketua);
+    app.route('/api/admin/calonketua/add')
+        .post(api_admin.pemilihan_ketua_controller.calonketuapost);
 
-    app.route('/api/calonketua/:id')
-    .get(jsonku.calonketuaid);
+    app.route('/api/admin/calonketua/edit/:id')
+        .put(api_admin.pemilihan_ketua_controller.calonketuaput);
 
-    app.route('/api/calonketua/add')
-    .post(jsonku.calonketuapost);
+    app.route('/api/admin/calonketua/delete/:id')
+        .delete(api_admin.pemilihan_ketua_controller.calonketuadelete);
 
-    app.route('/api/calonketua/edit/:id')
-    .put(jsonku.calonketuaput);
 
-    app.route('/api/calonketua/delete/:id')
-    .delete(jsonku.calonketuadelete);
-    
 
 
 
-    app.route('/api/komentar/add')
-    .post(jsonku.komentarpost);
+    // app.route('/api/admin/auth')
+    //     .get(api_admin.adminauth);
 
-    app.route('/api/komentar/edit/:id')
-    .put(jsonku.komentarput);
 
+    // app.route('/api/calonketua')
+    //     .get(api_admin.calonketua);
 
+    // app.route('/api/calonketua/:id')
+    //     .get(api_admin.calonketuaid);
 
-    app.route('/api/pemilihanketua')
-    .get(jsonku.pemilihanketua);
+    // app.route('/api/calonketua/add')
+    //     .post(api_admin.calonketuapost);
 
-    app.route('/api/pemilihanketua/:id')
-    .get(jsonku.pemilihanketuaid);
+    // app.route('/api/calonketua/edit/:id')
+    //     .put(api_admin.calonketuaput);
 
-    app.route('/api/pemilihanketua/add')
-    .post(jsonku.pemilihanketuapost);
+    // app.route('/api/calonketua/delete/:id')
+    //     .delete(api_admin.calonketuadelete);
 
-    app.route('/api/pemilihanketua/edit/:id')
-    .put(jsonku.pemilihanketuaput);
 
-    app.route('/api/pemilihanketua/delete/:id')
-    .delete(jsonku.pemilihanketuadelete);
 
 
+    // app.route('/api/komentar/add')
+    //     .post(api_admin.komentarpost);
 
-    app.route('/api/pengaduanmasyarakat/:id')
-    .get(jsonku.pengaduanmasyarakatid);
+    // app.route('/api/komentar/edit/:id')
+    //     .put(api_admin.komentarput);
 
-    app.route('/api/pengaduanmasyarakat/add')
-    .post(jsonku.pengaduanmasyarakatpost);
 
-    app.route('/api/pengaduanmasyarakat/edit/:id')
-    .put(jsonku.pengaduanmasyarakatput);
 
-    app.route('/api/pengaduanmasyarakat/delete/:id')
-    .delete(jsonku.pengaduanmasyarakatdelete);
+    // app.route('/api/pemilihanketua')
+    //     .get(api_admin.pemilihanketua);
 
+    // app.route('/api/pemilihanketua/:id')
+    //     .get(api_admin.pemilihanketuaid);
 
+    // app.route('/api/pemilihanketua/add')
+    //     .post(api_admin.pemilihanketuapost);
 
-    app.route('/api/umkm/:id')
-    .get(jsonku.umkmid);
+    // app.route('/api/pemilihanketua/edit/:id')
+    //     .put(api_admin.pemilihanketuaput);
 
-    app.route('/api/umkm/add')
-    .post(jsonku.umkmpost);
+    // app.route('/api/pemilihanketua/delete/:id')
+    //     .delete(api_admin.pemilihanketuadelete);
 
-    app.route('/api/umkm/edit/:id')
-    .put(jsonku.umkmput);
 
-    //APPROVE UMKM
 
-    //Custom API
+    // app.route('/api/xxx/:id')
+    //     .get(api_admin.pengaduanmasyarakatid);
 
+    // app.route('/api/xxx/add')
+    //     .post(api_admin.pengaduanmasyarakatpost);
 
-    //Phone
+    // app.route('/api/xxx/edit/:id')
+    //     .put(api_admin.pengaduanmasyarakatput);
 
-    app.route('/api/published/berita')
-    .get(jsonku.beritapublished);
 
-    app.route('/api/published/berita/:id')
-    .get(jsonku.beritapublishedid);
 
-    app.route('/api/published/umkm')
-    .get(jsonku.umkmpublished);
+    // app.route('/api/umkm/:id')
+    //     .get(api_admin.umkmid);
 
-    app.route('/api/published/umkm/:id')
-    .get(jsonku.umkmpublishedid);
+    // app.route('/api/umkm/add')
+    //     .post(api_admin.umkmpost);
 
-    app.route('/api/published/informasidesa')
-    .get(jsonku.informasidesapublished);
+    // app.route('/api/umkm/edit/:id')
+    //     .put(api_admin.umkmput);
 
-    app.route('/api/published/pengurusdesa')
-    .get(jsonku.penguruspublished);
+    // //APPROVE UMKM
 
-    //Phone
+    // //Custom API
 
 
+    // //Phone
 
-    app.route('/api/pemilihanketuadesa')
-    .get(jsonku.pemilihanketuadesa);
+    // app.route('/api/published/berita')
+    //     .get(api_admin.beritapublished);
 
-    app.route('/api/pemilihanketuadesa/periode/:id')
-    .get(jsonku.pemilihanketuadesaid);
+    // app.route('/api/published/berita/:id')
+    //     .get(api_admin.beritapublishedid);
 
-    app.route('/api/pemilihanketuadesa/now')
-    .get(jsonku.pemilihanketuadesanow);
+    // app.route('/api/published/umkm')
+    //     .get(api_admin.umkmpublished);
 
+    // app.route('/api/published/umkm/:id')
+    //     .get(api_admin.umkmpublishedid);
 
+    // app.route('/api/published/informasidesa')
+    //     .get(api_admin.informasidesapublished);
 
+    // app.route('/api/published/pengurusdesa')
+    //     .get(api_admin.penguruspublished);
 
-    app.route('/api/komentarberita')
-    .get(jsonku.komentarberita);
 
-    app.route('/api/komentarberita/:id')
-    .get(jsonku.komentarberitaid);
+    // //Phone
 
+    // app.route('/api/pemilihanketuadesa')
+    //     .get(api_admin.pemilihanketuadesa);
 
-   
+    // app.route('/api/pemilihanketuadesa/periode/:id')
+    //     .get(api_admin.pemilihanketuadesaid);
+
+    // app.route('/api/pemilihanketuadesa/now')
+    //     .get(api_admin.pemilihanketuadesanow);
+
+
+
+
+    // app.route('/api/komentarberita')
+    //     .get(api_admin.komentarberita);
+
+    // app.route('/api/komentarberita/:id')
+    //     .get(api_admin.komentarberitaid);
+
+
+
+
+
+
+
+
+
+
 }

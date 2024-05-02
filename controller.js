@@ -9,159 +9,8 @@ exports.index = function (req, res) {
 }
 
 
-//GET BERITA
-exports.berita = function (req, res) {
-    connection.query('SELECT * FROM berita', function (error, rows, fields) {
-        if (error) {
-            connection.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-//GET ID BERITA 
-exports.beritaid = function (req, res) {
-    let id = req.params.id;
-    connection.query('SELECT * FROM berita WHERE berita_id = ?', [id],
-        function (error, rows, fields) {
-            if (error) {
-                connection.log(error);
-            } else {
-                response.ok(rows, res);
-            };
-        }
-    )
-};
-
-//POST BERITA
-exports.beritapost = function (req, res) {
-    let judul = req.body.judul;
-    let subjudul = req.body.subjudul;
-    let tanggal = req.body.tanggal;
-    let isi = req.body.isi;
-    let gambar = req.body.gambar;
-
-    connection.query('INSERT INTO berita (judul,subjudul,tanggal,isi,gambar,publikasi,prioritas) VALUES (?,?,?,?,?,0,0)',
-        [judul, subjudul, tanggal, isi, gambar],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menginputkan Berita!", res)
-            };
-        })
-};
-
-//PUT BERITA
-exports.beritaput = function (req, res) {
-    let judul = req.body.judul;
-    let subjudul = req.body.subjudul;
-    let tanggal = req.body.tanggal;
-    let isi = req.body.isi;
-    let gambar = req.body.gambar;
-
-    let id = req.params.id;
-
-    if (gambar == null) {
-        connection.query('UPDATE berita SET judul=?,subjudul=?, tanggal=?, isi=? WHERE berita_id=?',
-            [judul, subjudul, tanggal, isi, id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-
-                    response.ok("Berhasil Mengedit Berita!", res)
-                };
-            })
-    } else {
-        connection.query('UPDATE berita SET judul=?,subjudul=?, tanggal=?, isi=?, gambar=? WHERE berita_id=?',
-            [judul, subjudul, tanggal, isi, gambar, id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-
-                    response.ok("Berhasil Mengedit Berita!", res)
-                };
-            })
-    }
-};
-
-//DELETE BERITA
-exports.beritadelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM berita WHERE berita_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Berita!", res)
-            };
-        })
-}
 
 
-// BERITA PUBLIKASI
-exports.beritapublikasi = function (req, res) {
-    let publikasi = req.body.publikasi;
-    let id = req.params.id;
-
-    if (publikasi == 0) {
-        connection.query('UPDATE berita SET publikasi=0 WHERE berita_id=?',
-            [id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    response.ok("Berhasil Mengedit Berita!", res)
-                };
-            })
-    } else if (publikasi = 1) {
-        connection.query('UPDATE berita SET publikasi=1 WHERE berita_id=?',
-            [id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    response.ok("Berhasil Mengedit Berita!", res)
-                };
-            })
-
-    }
-};
-
-
-// BERITA PRIORITAS
-exports.beritaprioritas = function (req, res) {
-    let prioritas = req.body.prioritas;
-    let id = req.params.id;
-
-    if (prioritas == 0) {
-        connection.query('UPDATE berita SET prioritas=0 WHERE berita_id=?',
-            [id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    response.ok("Berhasil Mengedit Berita!", res)
-                };
-            })
-    } else if (prioritas = 1) {
-        connection.query('UPDATE berita SET prioritas=1 WHERE berita_id=?',
-            [id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    response.ok("Berhasil Mengedit Berita!", res)
-                };
-            })
-
-    }
-};
 
 
 //GET CALON KETUA
@@ -190,67 +39,6 @@ exports.calonketuaid = function (req, res) {
     )
 };
 
-//POST CALON KETUA
-exports.calonketuapost = function (req, res) {
-    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;
-    let warga_id = req.body.warga_id;
-    let deskripsi = req.body.deskripsi;
-
-    connection.query('INSERT INTO calon_ketua (pemilihan_ketua_id,warga_id,deskripsi,total_pemilih) VALUES (?,?,?,?)',
-        [pemilihan_ketua_id, warga_id, deskripsi, 0],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menginputkan Data Calon Ketua!", res)
-            };
-        })
-};
-
-//PUT CALON KETUA
-exports.calonketuaput = function (req, res) {
-    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;
-    let warga_id = req.body.warga_id;
-    let deskripsi = req.body.deskripsi;
-    let total_pemilih = req.body.total_pemilih;
-    let id = req.params.id;
-
-    connection.query('UPDATE calon_ketua SET pemilihan_ketua_id=?, warga_id=?, deskripsi=?, total_pemilih=? WHERE calon_ketua_id=?',
-        [pemilihan_ketua_id, warga_id, deskripsi, total_pemilih, id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Mengedit Data Calon Ketua!", res)
-            };
-        })
-};
-
-//DELETE CALON KETUA
-exports.calonketuadelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM calon_ketua WHERE calon_ketua_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data Calon Ketua!", res)
-            };
-        })
-}
-
-//GET INFORMASI DESA
-exports.informasidesa = function (req, res) {
-    connection.query('SELECT * FROM informasi_desa WHERE informasi_desa_id=(SELECT MAX(informasi_desa_id)from informasi_desa)', function (error, rows, fields) {
-        if (error) {
-            connection.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
 
 //GET INFORMASI DESA
 exports.informasidesapublished = function (req, res) {
@@ -264,107 +52,8 @@ exports.informasidesapublished = function (req, res) {
     )
 };
 
-//PUT INFORMASI DESA
-exports.informasidesaput = function (req, res) {
-    let nama_desa = req.body.nama_desa;
-    let deskripsi = req.body.deskripsi;
-    let luas_lahan_pertanian = req.body.luas_lahan_pertanian;
-    let lahan_peternakan = req.body.lahan_peternakan;
-
-    connection.query('UPDATE informasi_desa SET nama_desa=?, deskripsi=?, luas_lahan_pertanian=?, lahan_peternakan=?',
-        [nama_desa, deskripsi, luas_lahan_pertanian, lahan_peternakan],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok(rows, res)
-            };
-        })
-};
-
-//GET JENIS UMKM
-exports.jenisumkm = function (req, res) {
-    connection.query('SELECT * FROM jenis_umkm', function (error, rows, fields) {
-        if (error) {
-            connection.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-//GET ID JENIS UMKM 
-exports.jenisumkmid = function (req, res) {
-    let id = req.params.id;
-    connection.query('SELECT * FROM jenis_umkm WHERE jenis_umkm_id = ?', [id],
-        function (error, rows, fields) {
-            if (error) {
-                connection.log(error);
-            } else {
-                response.ok(rows, res);
-            };
-        }
-    )
-};
-
-//POST JENIS UMKM
-exports.jenisumkmpost = function (req, res) {
-    let nama_jenis_umkm = req.body.nama_jenis_umkm;
-
-    connection.query('INSERT INTO jenis_umkm (nama_jenis_umkm) VALUES (?)',
-        [nama_jenis_umkm],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menginputkan Data Jenis UMKM!", res)
-            };
-        })
-};
-
-//PUT JENIS UMKM
-exports.jenisumkmput = function (req, res) {
-    let nama_jenis_umkm = req.body.nama_jenis_umkm;
-    let id = req.params.id;
-
-    connection.query('UPDATE jenis_umkm SET nama_jenis_umkm=? WHERE jenis_umkm_id=?',
-        [nama_jenis_umkm, id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Mengedit Data Jenis UMKM!", res)
-            };
-        })
-};
-
-//DELETE JENIS UMKM
-exports.jenisumkmdelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM jenis_umkm WHERE jenis_umkm_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data Jenis UMKM!", res)
-            };
-        })
-}
 
 
-//GET KOMENTAR
-exports.komentar = function (req, res) {
-    connection.query('SELECT komentar.komentar_id, warga.nama_lengkap,berita.judul, komentar.isi,warga.foto, komentar.tanggal FROM komentar JOIN warga JOIN berita WHERE komentar.warga_id = warga.warga_id AND komentar.berita_id = berita.berita_id', function (error, rows, fields) {
-        if (error) {
-            connection.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
 
 //GET ID KOMENTAR 
 exports.komentarid = function (req, res) {
@@ -418,18 +107,6 @@ exports.komentarput = function (req, res) {
         })
 };
 
-//DELETE KOMENTAR
-exports.komentardelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM komentar WHERE komentar_id=?', [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Komentar!", res)
-            };
-        })
-}
 
 
 //GET PEMILIHAN KETUA
@@ -459,56 +136,8 @@ exports.pemilihanketuaid = function (req, res) {
 };
 
 
-//POST PEMILIHAN KETUA
-exports.pemilihanketuapost = function (req, res) {
-    let tanggal_mulai = req.body.tanggal_mulai;
-    let tanggal_selesai = req.body.tanggal_selesai;
-    let judul = req.body.judul;
-    let deskripsi = req.body.deskripsi;
 
-    connection.query('INSERT INTO pemilihan_ketua (tanggal_mulai, tanggal_selesai, judul, deskripsi) VALUES (?,?,?,?)',
-        [tanggal_mulai, tanggal_selesai, judul, deskripsi],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menginputkan Data Pemilihan Ketua!", res)
-            };
-        })
-};
 
-//PUT PEMILIHAN KETUA
-exports.pemilihanketuaput = function (req, res) {
-    let tanggal_mulai = req.body.tanggal_mulai;
-    let tanggal_selesai = req.body.tanggal_selesai;
-    let judul = req.body.judul;
-    let deskripsi = req.body.deskripsi;
-    let id = req.params.id;
-
-    connection.query('UPDATE pemilihan_ketua SET tanggal_mulai=?, tanggal_selesai=?, judul=?, deskripsi=? WHERE pemilihan_ketua_id=?',
-        [tanggal_mulai, tanggal_selesai, judul, deskripsi, pemilihan_ketua_id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Mengedit Data Pemilihan Ketua!", res)
-            };
-        })
-};
-
-//DELETE PEMILIHAN KETUA
-exports.pemilihanketuadelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM pemilihan_ketua WHERE pemilihan_ketua_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data Pemilihan Ketua!", res)
-            };
-        })
-}
 
 
 //GET PENGADUAN MASYARAKAT
@@ -575,19 +204,7 @@ exports.pengaduanmasyarakatput = function (req, res) {
         })
 };
 
-//DELETE PENGADUAN MASYARAKAT
-exports.pengaduanmasyarakatdelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM pengaduan_masyarakat WHERE pengaduan_masyarakat_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data Pengaduan Masyarakat!", res)
-            };
-        })
-}
+
 
 //GET PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggota = function (req, res) {
@@ -615,85 +232,6 @@ exports.pengurusdesaanggotaid = function (req, res) {
     )
 };
 
-//POST PENGURUS DESA ANGGOTA
-exports.pengurusdesaanggotapost = function (req, res) {
-    let warga_id = req.body.warga_id;
-    let jabatan = req.body.jabatan;
-    let akses_admin = req.body.akses_admin;
-
-    connection.query('INSERT INTO pengurus_desa_anggota (warga_id, jabatan, akses_admin) VALUES (?,?,?)',
-        [warga_id, jabatan, akses_admin],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menginputkan Data Pengurus Desa!", res)
-            };
-        })
-};
-
-//PUT PENGURUS DESA ANGGOTA
-exports.pengurusdesaanggotaput = function (req, res) {
-    let id = req.params.id;
-    let jabatan = req.body.jabatan;
-
-
-    connection.query('UPDATE pengurus_desa_anggota SET jabatan=?WHERE pengurus_desa_anggota_id=?',
-        [jabatan, id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log(error)
-                response.ok("Berhasil Mengedit Data Pengurus Desa!", res)
-            };
-        })
-};
-
-//DELETE PENGURUS DESA ANGGOTA
-exports.pengurusdesaanggotadelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data Pengurus Desa!", res)
-            };
-        })
-}
-
-//PUT PENGURUS DESA ANGGOTA
-exports.pengurusdesaanggotaakses = function (req, res) {
-    let id = req.params.id;
-    let akses_admin = req.body.akses_admin;
-
-    if (akses_admin == 0) {
-        connection.query('UPDATE pengurus_desa_anggota SET akses_admin=0 WHERE pengurus_desa_anggota_id=?',
-            [id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log(error)
-                    response.ok("Berhasil Mengedit Data Pengurus Desa!", res)
-                };
-            })
-    } else if (akses_admin == 1) {
-        connection.query('UPDATE pengurus_desa_anggota SET akses_admin=1 WHERE pengurus_desa_anggota_id=?',
-            [id],
-            function (error, rows, fields) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log(error)
-                    response.ok("Berhasil Mengedit Data Pengurus Desa!", res)
-                };
-            })
-    }
-
-};
 
 //GET UMKM
 exports.umkm = function (req, res) {
@@ -766,117 +304,9 @@ exports.umkmput = function (req, res) {
         })
 };
 
-//PUT UMKM
-exports.umkmputapprove = function (req, res) {
-    let id = req.params.id;
-    let approve = req.body.approve;
 
 
-    connection.query('UPDATE umkm SET approve=? WHERE umkm_id=?',
-        [approve, id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Mengedit Data UMKM!", res)
-            };
-        })
-};
 
-//DELETE UMKM
-exports.umkmdelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM umkm WHERE umkm_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data UMKM!", res)
-            };
-        })
-}
-
-//GET WARGA
-exports.warga = function (req, res) {
-    connection.query('SELECT * FROM warga', function (error, rows, fields) {
-        if (error) {
-            connection.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-
-//GET ID WARGA 
-exports.wargaid = function (req, res) {
-    let id = req.params.id;
-    connection.query('SELECT * FROM warga WHERE warga_id = ?', [id],
-        function (error, rows, fields) {
-            if (error) {
-                connection.log(error);
-            } else {
-                response.ok(rows, res);
-            };
-        })
-};
-
-//POST WARGA
-exports.wargapost = function (req, res) {
-    let nik = req.body.nik;
-    let kk = req.body.kk;
-    let nama_lengkap = req.body.nama_lengkap;
-    let tanggal_lahir = req.body.tanggal_lahir;
-    let password = md5(req.body.kk);
-
-    connection.query('INSERT INTO warga(nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih, password) VALUES (?,?,?,?,?,?,?)',
-        [nik, kk, nama_lengkap, tanggal_lahir, "default.jpg", "0", password],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menginputkan Data!", res)
-            };
-        })
-};
-
-//PUT WARGA
-exports.wargaput = function (req, res) {
-    let id = req.params.id;
-    let nik = req.body.nik;
-    let kk = req.body.kk;
-    let nama_lengkap = req.body.nama_lengkap;
-    let tanggal_lahir = req.body.tanggal_lahir;
-    let foto = req.body.foto;
-    let hak_pilih = req.body.hak_pilih;
-    let password = req.body.password;
-
-    connection.query('UPDATE warga SET nik=?, kk=?, nama_lengkap=?, tanggal_lahir=?, foto=?, hak_pilih=?, password=? WHERE warga_id=?',
-        [nik, kk, nama_lengkap, tanggal_lahir, foto, hak_pilih, password, id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Ubah Data!", res)
-            };
-        })
-};
-
-//DELETE WARGA
-exports.wargadelete = function (req, res) {
-    let id = req.params.id;
-    connection.query('DELETE FROM warga WHERE warga_id=?',
-        [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-            } else {
-                response.ok("Berhasil Menghapus Data!", res)
-            };
-        })
-}
 
 //JOIN KOMENTAR BERITA 
 exports.komentarberita = function (req, res) {
@@ -1349,42 +779,6 @@ exports.pemilihanketuadesanow = function (req, res) {
 };
 
 
-// JOIN PENGADUAN MASYARAKAT
-exports.pengaduanmasyarakatjoin = function (req, res) {
-    connection.query('SELECT pengaduan_masyarakat.pengaduan_masyarakat_id, warga.warga_id, warga.nik, warga.nama_lengkap, pengaduan_masyarakat.subjek, pengaduan_masyarakat.isi, pengaduan_masyarakat.tanggal from pengaduan_masyarakat JOIN warga WHERE pengaduan_masyarakat.warga_id = warga.warga_id ORDER BY pengaduan_masyarakat.pengaduan_masyarakat_id', function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-// JOIN ID PENGADUAN MASYARAKAT
-exports.pengaduanmasyarakatjoinid = function (req, res) {
-    let id = req.params.id;
-    connection.query('SELECT pengaduan_masyarakat.pengaduan_masyarakat_id, warga.warga_id, warga.nik, warga.nama_lengkap, pengaduan_masyarakat.subjek, pengaduan_masyarakat.isi, pengaduan_masyarakat.tanggal from pengaduan_masyarakat JOIN warga WHERE pengaduan_masyarakat.warga_id = warga.warga_id AND pengaduan_masyarakat.pengaduan_masyarakat_id=?', [id], function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-// JOIN UMKM
-exports.umkmjoin = function (req, res) {
-    connection.query('SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, umkm.approve, umkm.status, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id ORDER BY umkm.umkm_id;', function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
 
 exports.umkmpublished = function (req, res) {
     connection.query('SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id AND umkm.approve=1 AND umkm.status=1 ORDER BY umkm.umkm_id;', function (error, rows, fields) {
@@ -1409,30 +803,6 @@ exports.umkmpublishedid = function (req, res) {
     )
 };
 
-// JOIN ID UMKM
-exports.umkmjoinid = function (req, res) {
-    let id = req.params.id
-    connection.query('SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, umkm.approve, umkm.status, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id AND umkm.umkm_id=?', [id], function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-// JOIN PENGURUS DESA
-exports.detailpengurus = function (req, res) {
-    connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;', function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
 
 exports.penguruspublished = function (req, res) {
     connection.query(`SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.nama_lengkap, warga.foto, pengurus_desa_anggota.jabatan FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;`, function (error, rows, fields) {
@@ -1449,20 +819,6 @@ exports.penguruspublished = function (req, res) {
 // AUTH ADMIN DESA
 exports.adminauth = function (req, res) {
     connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.nik, pengurus_desa_anggota.akses_admin, warga.password FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id', function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-
-// JOIN ID PENGURUS DESA
-exports.detailpengurusid = function (req, res) {
-    let id = req.params.id
-    connection.query('SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id AND pengurus_desa_anggota.pengurus_desa_anggota_id=?;', [id], function (error, rows, fields) {
         if (error) {
             console.log(error);
         } else {
