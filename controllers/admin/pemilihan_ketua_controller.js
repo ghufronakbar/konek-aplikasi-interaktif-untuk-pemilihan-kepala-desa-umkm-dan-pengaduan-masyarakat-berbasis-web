@@ -165,10 +165,16 @@ exports.pemilihanketuadesaid = function (req, res) {
 
 //POST PEMILIHAN KETUA
 exports.pemilihanketuapost = function (req, res) {
-    let tanggal_mulai = req.body.tanggal_mulai;
-    let tanggal_selesai = req.body.tanggal_selesai;
+    let tanggal_mulai = new Date(req.body.tanggal_mulai); // Konversi ke objek Date
+    let tanggal_sekarang = new Date(); // Tanggal saat ini
+    let tanggal_selesai = new Date(req.body.tanggal_selesai);
     let judul = req.body.judul;
     let deskripsi = req.body.deskripsi;
+
+    // Validasi tanggal_mulai harus lebih besar dari tanggal sekarang
+    if (tanggal_mulai <= tanggal_sekarang) {
+        return response.error("Tanggal mulai harus lebih besar dari tanggal sekarang", res);
+    }
 
     // Query untuk memeriksa tanggal yang bertabrakan
     connection.query('SELECT * FROM pemilihan_ketua WHERE (tanggal_mulai BETWEEN ? AND ? OR tanggal_selesai BETWEEN ? AND ?)',
@@ -201,13 +207,21 @@ exports.pemilihanketuapost = function (req, res) {
         });
 };
 
+
 //PUT PEMILIHAN KETUA
 exports.pemilihanketuaput = function (req, res) {
-    let tanggal_mulai = req.body.tanggal_mulai;
-    let tanggal_selesai = req.body.tanggal_selesai;
+    let tanggal_mulai = new Date(req.body.tanggal_mulai); // Konversi ke objek Date
+    let tanggal_selesai = new Date(req.body.tanggal_selesai);
     let judul = req.body.judul;
     let deskripsi = req.body.deskripsi;
     let id = req.params.id;
+
+    let tanggalSekarang = new Date(); // Tanggal sekarang
+
+    // Validasi tanggal_mulai harus lebih besar dari tanggal sekarang
+    if (tanggal_mulai <= tanggalSekarang) {
+        return response.error("Tanggal mulai harus lebih besar dari tanggal sekarang", res);
+    }
 
     // Query untuk memeriksa tanggal yang bertabrakan, tidak termasuk data dengan pemilihan_ketua_id yang akan diedit
     connection.query('SELECT * FROM pemilihan_ketua WHERE pemilihan_ketua_id != ? AND (tanggal_mulai BETWEEN ? AND ? OR tanggal_selesai BETWEEN ? AND ?)',
@@ -260,7 +274,10 @@ exports.pemilihanketuadelete = function (req, res) {
 
 //GET CALON KETUA
 exports.calonketua = function (req, res) {
-    connection.query('SELECT * FROM calon_ketua', function (error, rows, fields) {
+    connection.query(`SELECT ck.pemilihan_ketua_id, ck.calon_ketua_id, ck.warga_id, w.nama_lengkap AS namalengkap,
+    w.nik, w.tanggal_lahir, w.foto, ck.deskripsi AS deskripsi_calon, ck.total_pemilih
+    FROM calon_ketua ck
+    JOIN warga w ON ck.warga_id = w.warga_id`, function (error, rows, fields) {
         if (error) {
             console.log(error);
         } else {
@@ -273,7 +290,10 @@ exports.calonketua = function (req, res) {
 //GET ID CALON KETUA
 exports.calonketuaid = function (req, res) {
     let id = req.params.id
-    connection.query('SELECT * FROM calon_ketua WHERE calon_ketua_id=?', [id], function (error, rows, fields) {
+    connection.query(`SELECT ck.pemilihan_ketua_id, ck.calon_ketua_id, ck.warga_id, w.nama_lengkap AS namalengkap,
+    w.nik, w.tanggal_lahir, w.foto, ck.deskripsi AS deskripsi_calon, ck.total_pemilih
+    FROM calon_ketua ck
+    JOIN warga w ON ck.warga_id = w.warga_id WHERE ck.calon_ketua_id=?`,[id], function (error, rows, fields) {
         if (error) {
             console.log(error);
         } else {
