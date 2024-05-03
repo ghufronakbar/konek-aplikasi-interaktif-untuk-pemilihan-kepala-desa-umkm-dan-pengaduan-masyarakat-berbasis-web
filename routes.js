@@ -2,6 +2,7 @@
 
 module.exports = function (app) {
     var api_admin = require('./controllers/admin');
+    var api_user = require('./controllers/user');
     const verifikasi = require('./middleware/verifikasi');
 
 
@@ -233,25 +234,29 @@ module.exports = function (app) {
     // //Custom API
 
 
-    // //Phone
+    // API MOBILE PHONE
+    // REGISTER
+    app.route('/api/user/login')
+        .post(api_user.auth_controller.login);
 
-    // app.route('/api/published/berita')
-    //     .get(api_admin.beritapublished);
 
-    // app.route('/api/published/berita/:id')
-    //     .get(api_admin.beritapublishedid);
+    app.route('/api/user/berita')
+        .get(api_user.berita_controller.beritapublished);
 
-    // app.route('/api/published/umkm')
-    //     .get(api_admin.umkmpublished);
+    app.route('/api/user/berita/:id')
+        .get(api_user.berita_controller.beritapublishedid);
 
-    // app.route('/api/published/umkm/:id')
-    //     .get(api_admin.umkmpublishedid);
+    app.route('/api/user/umkm')
+        .get(api_user.umkm_controller.umkmpublished);
 
-    // app.route('/api/published/informasidesa')
-    //     .get(api_admin.informasidesapublished);
+    app.route('/api/user/umkm/:id')
+        .get(api_user.umkm_controller.umkmpublishedid);
 
-    // app.route('/api/published/pengurusdesa')
-    //     .get(api_admin.penguruspublished);
+    app.route('/api/user/informasidesa')
+        .get(api_user.informasi_desa_controller.informasidesapublished);
+
+    app.route('/api/user/pengurusdesa')
+        .get(api_user.informasi_desa_controller.penguruspublished);
 
 
     // //Phone

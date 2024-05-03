@@ -40,17 +40,6 @@ exports.calonketuaid = function (req, res) {
 };
 
 
-//GET INFORMASI DESA
-exports.informasidesapublished = function (req, res) {
-    connection.query(`SELECT * FROM informasi_desa WHERE informasi_desa_id=(SELECT MAX(informasi_desa_id)from informasi_desa)`, function (error, rows, fields) {
-        if (error) {
-            connection.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
 
 
 
@@ -384,154 +373,6 @@ exports.komentarberita = function (req, res) {
     );
 };
 
-exports.beritapublished = function (req, res) {
-    connection.query(
-        `SELECT 
-            b.berita_id, 
-            b.judul, 
-            b.subjudul, 
-            b.tanggal, 
-            b.isi, 
-            b.gambar,             
-            k.komentar_id,
-            k.isi as komentar_isi,
-            k.tanggal as komentar_tanggal,
-            w.warga_id,
-            w.nama_lengkap,
-            w.foto
-        FROM 
-            berita b
-        LEFT JOIN 
-            komentar k ON b.berita_id = k.berita_id
-        LEFT JOIN 
-            warga w ON k.warga_id = w.warga_id
-            WHERE b.publikasi = 1 `,
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-                response.error("Failed to get comments for news", res);
-            } else {
-                // Lakukan akumulasi data berita dan komentar
-                const hasil = rows.reduce((akumulasikan, item) => {
-                    // Cek jika berita_id sudah ada di dalam hasil
-                    if (akumulasikan[item.berita_id]) {
-                        // Tambahkan komentar ke dalam berita yang sudah ada
-                        akumulasikan[item.berita_id].komentar.push({
-                            komentar_id: item.komentar_id,
-                            isi: item.komentar_isi,
-                            tanggal: item.komentar_tanggal,
-                            warga_id: item.warga_id,
-                            namalengkap: item.nama_lengkap,
-                            foto: item.foto
-                        });
-                    } else {
-                        // Buat objek baru untuk berita dan tambahkan komentar
-                        akumulasikan[item.berita_id] = {
-                            berita_id: item.berita_id,
-                            judul: item.judul,
-                            subjudul: item.subjudul,
-                            tanggal: item.tanggal,
-                            isi: item.isi,
-                            gambar: item.gambar,
-                            publikasi: item.publikasi,
-                            prioritas: item.prioritas,
-                            komentar: [{
-                                komentar_id: item.komentar_id,
-                                isi: item.komentar_isi,
-                                tanggal: item.komentar_tanggal,
-                                warga_id: item.warga_id,
-                                namalengkap: item.nama_lengkap,
-                                foto: item.foto
-                            }]
-                        };
-                    }
-                    return akumulasikan;
-                }, {});
-
-                // Konversi objek hasil ke dalam array values
-                const values = Object.values(hasil);
-
-                // Response JSON
-                response.ok(values, res);
-            }
-        }
-    );
-};
-
-exports.beritapublishedid = function (req, res) {
-    let id = req.params.id;
-    connection.query(
-        `SELECT 
-            b.berita_id, 
-            b.judul, 
-            b.subjudul, 
-            b.tanggal, 
-            b.isi, 
-            b.gambar,             
-            k.komentar_id,
-            k.isi as komentar_isi,
-            k.tanggal as komentar_tanggal,
-            w.warga_id,
-            w.nama_lengkap,
-            w.foto
-        FROM 
-            berita b
-        LEFT JOIN 
-            komentar k ON b.berita_id = k.berita_id
-        LEFT JOIN 
-            warga w ON k.warga_id = w.warga_id
-            WHERE b.publikasi = 1 AND b.berita_id=?`, [id],
-        function (error, rows, fields) {
-            if (error) {
-                console.log(error);
-                response.error("Failed to get comments for news", res);
-            } else {
-                // Lakukan akumulasi data berita dan komentar
-                const hasil = rows.reduce((akumulasikan, item) => {
-                    // Cek jika berita_id sudah ada di dalam hasil
-                    if (akumulasikan[item.berita_id]) {
-                        // Tambahkan komentar ke dalam berita yang sudah ada
-                        akumulasikan[item.berita_id].komentar.push({
-                            komentar_id: item.komentar_id,
-                            isi: item.komentar_isi,
-                            tanggal: item.komentar_tanggal,
-                            warga_id: item.warga_id,
-                            namalengkap: item.nama_lengkap,
-                            foto: item.foto
-                        });
-                    } else {
-                        // Buat objek baru untuk berita dan tambahkan komentar
-                        akumulasikan[item.berita_id] = {
-                            berita_id: item.berita_id,
-                            judul: item.judul,
-                            subjudul: item.subjudul,
-                            tanggal: item.tanggal,
-                            isi: item.isi,
-                            gambar: item.gambar,
-                            publikasi: item.publikasi,
-                            prioritas: item.prioritas,
-                            komentar: [{
-                                komentar_id: item.komentar_id,
-                                isi: item.komentar_isi,
-                                tanggal: item.komentar_tanggal,
-                                warga_id: item.warga_id,
-                                namalengkap: item.nama_lengkap,
-                                foto: item.foto
-                            }]
-                        };
-                    }
-                    return akumulasikan;
-                }, {});
-
-                // Konversi objek hasil ke dalam array values
-                const values = Object.values(hasil);
-
-                // Response JSON
-                response.ok(values, res);
-            }
-        }
-    );
-};
 
 //JOIN ID KOMENTAR BERITA 
 exports.komentarberitaid = function (req, res) {
@@ -780,40 +621,9 @@ exports.pemilihanketuadesanow = function (req, res) {
 
 
 
-exports.umkmpublished = function (req, res) {
-    connection.query('SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id AND umkm.approve=1 AND umkm.status=1 ORDER BY umkm.umkm_id;', function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
-
-exports.umkmpublishedid = function (req, res) {
-    let id = req.params.id;
-    connection.query(`SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, umkm.deskripsi, umkm.gambar, umkm.lokasi, warga.warga_id, warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND umkm.warga_id = warga.warga_id AND umkm.approve=1 AND umkm.status=1 AND umkm.umkm_id=? ORDER BY umkm.umkm_id;`, [id], function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
 
 
-exports.penguruspublished = function (req, res) {
-    connection.query(`SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.nama_lengkap, warga.foto, pengurus_desa_anggota.jabatan FROM pengurus_desa_anggota JOIN warga WHERE pengurus_desa_anggota.warga_id = warga.warga_id ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;`, function (error, rows, fields) {
-        if (error) {
-            console.log(error);
-        } else {
-            response.ok(rows, res)
-        };
-    }
-    )
-};
+
 
 
 // AUTH ADMIN DESA

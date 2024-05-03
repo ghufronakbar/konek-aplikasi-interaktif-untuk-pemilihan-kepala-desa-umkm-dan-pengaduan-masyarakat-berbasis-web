@@ -1,3 +1,3 @@
 module.exports={
-    'secret':'lans'
+    'secret':'k0n3k'
 }
