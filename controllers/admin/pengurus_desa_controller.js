@@ -34,11 +34,13 @@ exports.detailpengurusid = function (req, res) {
 //POST PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotapost = function (req, res) {
     let warga_id = req.body.warga_id;
-    let jabatan = req.body.jabatan;
-    let akses_admin = req.body.akses_admin;
+    let jabatan = req.body.jabatan;    
+    console.log("Data")
+    console.log(warga_id)
+    console.log(jabatan)
 
     connection.query('INSERT INTO pengurus_desa_anggota (warga_id, jabatan, akses_admin) VALUES (?,?,?)',
-        [warga_id, jabatan, akses_admin],
+        [warga_id, jabatan, 0],
         function (error, rows, fields) {
             if (error) {
                 console.log(error);
