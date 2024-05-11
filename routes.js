@@ -259,25 +259,13 @@ module.exports = function (app) {
         .get(api_user.informasi_desa_controller.penguruspublished);
 
 
-    // //Phone
-
-    // app.route('/api/pemilihanketuadesa')
-    //     .get(api_admin.pemilihanketuadesa);
-
-    // app.route('/api/pemilihanketuadesa/periode/:id')
-    //     .get(api_admin.pemilihanketuadesaid);
-
-    // app.route('/api/pemilihanketuadesa/now')
-    //     .get(api_admin.pemilihanketuadesanow);
+    
 
 
 
 
-    // app.route('/api/komentarberita')
-    //     .get(api_admin.komentarberita);
 
-    // app.route('/api/komentarberita/:id')
-    //     .get(api_admin.komentarberitaid);
+
 
 
 
