@@ -1,9 +1,8 @@
 'use strict';
 
 module.exports = function (app) {
-    var api_admin = require('./controllers/admin');
-    var api_user = require('./controllers/user');
-    const verifikasi = require('./middleware/verifikasi');
+    var api_admin = require('../controllers/admin');
+    const verifikasi = require('../middleware/verifikasi');
 
 
     //API DASHBOARD ADMIN
@@ -231,32 +230,6 @@ module.exports = function (app) {
 
     // //APPROVE UMKM
 
-    // //Custom API
-
-
-    // API MOBILE PHONE
-    // REGISTER
-    app.route('/api/user/login')
-        .post(api_user.auth_controller.login);
-
-
-    app.route('/api/user/berita')
-        .get(api_user.berita_controller.beritapublished);
-
-    app.route('/api/user/berita/:id')
-        .get(api_user.berita_controller.beritapublishedid);
-
-    app.route('/api/user/umkm')
-        .get(api_user.umkm_controller.umkmpublished);
-
-    app.route('/api/user/umkm/:id')
-        .get(api_user.umkm_controller.umkmpublishedid);
-
-    app.route('/api/user/informasidesa')
-        .get(api_user.informasi_desa_controller.informasidesapublished);
-
-    app.route('/api/user/pengurusdesa')
-        .get(api_user.informasi_desa_controller.penguruspublished);
 
 
     

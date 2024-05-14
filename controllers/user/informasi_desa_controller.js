@@ -3,6 +3,7 @@
 var response = require('../../res');
 var connection = require('../../connection');
 var md5 = require('md5');
+const verifikasi = require('../../middleware/verifikasi-user');
 
 
 //GET INFORMASI DESA
