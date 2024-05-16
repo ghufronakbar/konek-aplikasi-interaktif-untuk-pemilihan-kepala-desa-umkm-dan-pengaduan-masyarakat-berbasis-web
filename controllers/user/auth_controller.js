@@ -77,7 +77,7 @@ exports.check_user = function (req, res) {
   });
 };
 
-//GET INFORMASI DESA
+
 exports.infoUserLogin = function (req, res) {
   let token = req.params.token;
   verifikasi(token)(req, res, function () {
@@ -162,8 +162,6 @@ exports.mob_update_profile = function (req, res) {
     );
   });
 };
-
-
 
 
 //Post password Users match
