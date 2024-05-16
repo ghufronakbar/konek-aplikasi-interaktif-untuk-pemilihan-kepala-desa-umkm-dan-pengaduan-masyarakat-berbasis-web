@@ -14,6 +14,8 @@ app.use(cors());
 //routes
 var routes = require('./routes/admin');
 var routes = require('./routes/user');
+app.use("/umkm/", express.static("upload/umkm"));
+app.use("/profile/", express.static("upload/warga"));
 routes(app);
 
 //menu routes index

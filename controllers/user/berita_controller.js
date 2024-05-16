@@ -9,7 +9,6 @@ const verifikasi = require('../../middleware/verifikasi-user');
 exports.beritapublishedhome = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
-        var id_user = req.decoded.id_user;
         connection.query(
             `SELECT 
             berita_id, 
@@ -43,7 +42,6 @@ exports.beritapublishedhome = function (req, res) {
 exports.beritaprioritas = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
-        console.log(req.decoded.warga_id)
         connection.query(
             `SELECT 
             berita_id, 
@@ -80,7 +78,6 @@ exports.beritaprioritas = function (req, res) {
 exports.beritapublished = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
-        var id_user = req.decoded.id_user;
         connection.query(
             `SELECT 
             berita_id, 
@@ -115,6 +112,7 @@ exports.beritapublishedid = function (req, res) {
     let id = req.params.id;
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
+        var warga_id = req.decoded.warga_id
         connection.query(
             `SELECT 
             b.berita_id, 
@@ -146,37 +144,75 @@ exports.beritapublishedid = function (req, res) {
                         // Cek jika berita_id sudah ada di dalam hasil
                         if (akumulasikan[item.berita_id]) {
                             // Tambahkan komentar ke dalam berita yang sudah ada
-                            akumulasikan[item.berita_id].komentar.push({
-                                komentar_id: item.komentar_id,
-                                isi: item.komentar_isi,
-                                tanggal: item.komentar_tanggal,
-                                warga_id: item.warga_id,
-                                namalengkap: item.nama_lengkap,
-                                foto: item.foto
-                            });
+                            if (item.warga_id == warga_id) {
+                                akumulasikan[item.berita_id].komentar.push({
+                                    komentar_id: item.komentar_id || 0,
+                                    isi: item.komentar_isi || "", // Ganti null dengan string kosong
+                                    tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
+                                    warga_id: item.warga_id || 0, // Ganti null dengan string kosong
+                                    namalengkap: "You" || "", // Ganti null dengan string kosong
+                                    foto: item.foto || "" // Ganti null dengan string kosong
+                                });
+                            } else {
+                                akumulasikan[item.berita_id].komentar.push({
+                                    komentar_id: item.komentar_id || 0,
+                                    isi: item.komentar_isi || "", // Ganti null dengan string kosong
+                                    tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
+                                    warga_id: item.warga_id || 0, // Ganti null dengan string kosong
+                                    namalengkap: item.nama_lengkap || "", // Ganti null dengan string kosong
+                                    foto: item.foto || "" // Ganti null dengan string kosong
+                                });
+                            }
                         } else {
-                            // Buat objek baru untuk berita dan tambahkan komentar
-                            akumulasikan[item.berita_id] = {
-                                berita_id: item.berita_id,
-                                judul: item.judul,
-                                subjudul: item.subjudul,
-                                tanggal: item.tanggal,
-                                isi: item.isi,
-                                gambar: item.gambar,
-                                publikasi: item.publikasi,
-                                prioritas: item.prioritas,
-                                komentar: [{
-                                    komentar_id: item.komentar_id,
-                                    isi: item.komentar_isi,
-                                    tanggal: item.komentar_tanggal,
-                                    warga_id: item.warga_id,
-                                    namalengkap: item.nama_lengkap,
-                                    foto: item.foto
-                                }]
-                            };
+                            if (item.warga_id == warga_id) {
+                                // Buat objek baru untuk berita dan tambahkan komentar
+                                akumulasikan[item.berita_id] = {
+                                    berita_id: item.berita_id,
+                                    judul: item.judul,
+                                    subjudul: item.subjudul,
+                                    tanggal: item.tanggal,
+                                    isi: item.isi,
+                                    gambar: item.gambar,
+                                    publikasi: item.publikasi,
+                                    prioritas: item.prioritas,
+                                    komentar: [
+                                        {
+                                            komentar_id: item.komentar_id || 0, // Ganti null dengan string kosong
+                                            isi: item.komentar_isi || "", // Ganti null dengan string kosong
+                                            tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
+                                            warga_id: item.warga_id || 0, // Ganti null dengan string kosong
+                                            namalengkap: "You" || "", // Ganti null dengan string kosong
+                                            foto: item.foto || "" // Ganti null dengan string kosong
+                                        }
+                                    ]
+                                };
+                            } else {
+                                // Buat objek baru untuk berita dan tambahkan komentar
+                                akumulasikan[item.berita_id] = {
+                                    berita_id: item.berita_id,
+                                    judul: item.judul,
+                                    subjudul: item.subjudul,
+                                    tanggal: item.tanggal,
+                                    isi: item.isi,
+                                    gambar: item.gambar,
+                                    publikasi: item.publikasi,
+                                    prioritas: item.prioritas,
+                                    komentar: [
+                                        {
+                                            komentar_id: item.komentar_id || 0, // Ganti null dengan string kosong
+                                            isi: item.komentar_isi || "", // Ganti null dengan string kosong
+                                            tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
+                                            warga_id: item.warga_id || 0, // Ganti null dengan string kosong
+                                            namalengkap: item.nama_lengkap || "", // Ganti null dengan string kosong
+                                            foto: item.foto || "" // Ganti null dengan string kosong
+                                        }
+                                    ]
+                                };
+                            }
                         }
                         return akumulasikan;
                     }, {});
+
 
                     // Konversi objek hasil ke dalam array values
                     const values = Object.values(hasil);
@@ -188,3 +224,36 @@ exports.beritapublishedid = function (req, res) {
         );
     })
 };
+
+
+exports.komentarBerita = function (req, res) {
+    const { token, isi, berita_id } = req.body;
+    let now = new Date();
+    let date_now =
+        now.getFullYear() +
+        "-" +
+        ("0" + (now.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + now.getDate()).slice(-2) +
+        " " +
+        ("0" + now.getHours()).slice(-2) +
+        ":" +
+        ("0" + now.getMinutes()).slice(-2) +
+        ":" +
+        ("0" + now.getSeconds()).slice(-2);
+    verifikasi(token)(req, res, function () {
+        var warga_id = req.decoded.warga_id
+        // Construct SQL query
+        const sql = `INSERT INTO komentar (warga_id, isi, tanggal, berita_id) VALUES ( ?, ?, ?, ?)`;
+
+        // Execute query
+        connection.query(sql, [warga_id, isi, date_now, berita_id], (error, result) => {
+            if (error) {
+                console.error('Error executing query:', error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                res.status(200).json({ message: 'Comment inserted successfully' });
+            }
+        });
+    })
+}
