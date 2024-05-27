@@ -1,20 +1,10 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
-var mysql = require('mysql');
-var jwt = require('jsonwebtoken');
-var config = require('../../config/secret')
-var ip = require('ip');
-const verifikasi = require('../../middleware/verifikasi-user');
-const { warga } = require('../admin/warga_controller');
-const url = require("url");
+const connection = require('../../connection');
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const { promisify } = require('util');
-
 const unlinkAsync = promisify(fs.unlink);
 
 const storage = multer.diskStorage({

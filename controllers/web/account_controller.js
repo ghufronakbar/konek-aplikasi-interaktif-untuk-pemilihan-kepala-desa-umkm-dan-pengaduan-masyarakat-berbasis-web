@@ -7,9 +7,6 @@ var mysql = require('mysql');
 var jwt = require('jsonwebtoken');
 var config = require('../../config/secret')
 var ip = require('ip');
-const verifikasi = require('../../middleware/verifikasi-user');
-const { warga } = require('../admin/warga_controller');
-const url = require("url");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
@@ -159,7 +156,7 @@ exports.showProfile = function (req, res) {
             kk: rows[0].kk,
             nama_lengkap: rows[0].nama_lengkap,
             tanggal_lahir: rows[0].tanggal_lahir,
-            foto: process.env.BASE_URL + `/profile/` + rows[0].foto,
+            foto: rows[0].foto? process.env.BASE_URL + `/profile/` + rows[0].foto : process.env.BASE_URL + `/profile/default.png`,
             hak_pilih: rows[0].hak_pilih
           };
           return res.status(200).json({ status: 200, profile: profile });

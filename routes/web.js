@@ -23,6 +23,9 @@ module.exports = function (app) {
     app.route('/api/web/berita/:berita_id')
         .get(WebVerification, WebController.berita_controller.showBeritaId);
 
+        app.route('/api/web/berita-prioritas')
+        .get(WebVerification, WebController.berita_controller.showBeritaPrioritas);
+
     app.route('/api/web/berita/komentar')
         .post(WebVerification, WebController.berita_controller.addKomentar);
 

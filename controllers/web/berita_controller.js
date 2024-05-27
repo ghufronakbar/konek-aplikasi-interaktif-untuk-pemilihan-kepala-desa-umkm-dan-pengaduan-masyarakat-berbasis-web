@@ -1,18 +1,6 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
-var mysql = require('mysql');
-var jwt = require('jsonwebtoken');
-var config = require('../../config/secret')
-var ip = require('ip');
-const verifikasi = require('../../middleware/verifikasi-user');
-const { warga } = require('../admin/warga_controller');
-const url = require("url");
-const fs = require("fs");
-const multer = require("multer");
-const path = require("path");
+const connection = require('../../connection');
 
 exports.showBerita = async (req, res) => {
   const warga_id = req.decoded.warga_id;
@@ -101,7 +89,8 @@ exports.showBerita = async (req, res) => {
               tanggal: komentar.komentar_tanggal || "",
               warga_id: komentar.warga_id || 0,
               namalengkap: "You",
-              foto: komentar.foto || ""
+
+              foto: komentar.foto ? process.env.BASE_URL + `/profile/` + komentar.foto : process.env.BASE_URL + `/profile/default.png`,
             });
           } else {
             hasil[komentar.berita_id].komentar.push({
@@ -110,7 +99,8 @@ exports.showBerita = async (req, res) => {
               tanggal: komentar.komentar_tanggal || "",
               warga_id: komentar.warga_id || 0,
               namalengkap: komentar.nama_lengkap || "",
-              foto: komentar.foto || ""
+              foto: komentar.foto ? process.env.BASE_URL + `/profile/` + komentar.foto : process.env.BASE_URL + `/profile/default.png`,
+
             });
           }
         }
@@ -235,6 +225,31 @@ exports.showBeritaId = async (req, res) => {
   );
 }
 
+exports.showBeritaPrioritas = function (req, res) {
+  connection.query(
+    `SELECT 
+          berita_id, 
+          judul, 
+          subjudul, 
+          tanggal, 
+          isi, 
+          gambar
+          FROM berita 
+          WHERE publikasi=1 & prioritas=1`,
+    (error, rows, fields) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
+      } else {
+        // Konversi objek hasil ke dalam array values
+        const values = Object.values(rows);
+        // Response JSON
+        res.json({ values })
+      }
+    }
+  );
+
+};
 
 exports.addKomentar = async (req, res) => {
   const warga_id = req.decoded.warga_id;
