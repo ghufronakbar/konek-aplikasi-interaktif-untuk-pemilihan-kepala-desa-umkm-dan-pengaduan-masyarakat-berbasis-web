@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 var morgan = require('morgan')
 var cors = require('cors')
 const app = express();
+require('dotenv').config()
+
 
 //parse application json
 app.use(bodyParser.urlencoded({extended: true}));
@@ -14,6 +16,7 @@ app.use(cors());
 //routes
 var routes = require('./routes/admin');
 var routes = require('./routes/user');
+var routes = require('./routes/web');
 app.use("/umkm/", express.static("upload/umkm"));
 app.use("/profile/", express.static("upload/warga"));
 routes(app);
