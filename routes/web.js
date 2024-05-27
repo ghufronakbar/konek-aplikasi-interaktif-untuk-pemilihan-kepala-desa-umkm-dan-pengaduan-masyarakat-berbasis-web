@@ -23,7 +23,7 @@ module.exports = function (app) {
     app.route('/api/web/berita/:berita_id')
         .get(WebVerification, WebController.berita_controller.showBeritaId);
 
-        app.route('/api/web/berita-prioritas')
+    app.route('/api/web/berita-prioritas')
         .get(WebVerification, WebController.berita_controller.showBeritaPrioritas);
 
     app.route('/api/web/berita/komentar')
@@ -59,4 +59,11 @@ module.exports = function (app) {
     // PENGADUAN MASYARAKAT CONTROLLER
     app.route('/api/web/list/pengaduan-masyarakat/add')
         .post(WebVerification, WebController.pengaduan_masyarakat_controller.addPengaduanMasyarakat);
+
+    // PEMILIHAN KETUA CONTROLLER
+    app.route('/api/web/pemilihan-ketua')
+        .get(WebVerification, WebController.pemilihan_ketua_controller.showPemilihanKetua);
+
+    app.route('/api/web/calon-ketua/:calon_ketua_id')
+        .get(WebVerification, WebController.pemilihan_ketua_controller.showDetailCalon);
 }
