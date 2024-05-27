@@ -86,7 +86,7 @@ exports.showPemilihanKetua = function (req, res) {
                       total_pemilih: row.total_pemilih,
                       nama_lengkap: row.nama_lengkap,
                       tanggal_lahir: row.tanggal_lahir,
-                      foto: process.env.BASE_URL + `/profil/` + row.foto,
+                      foto: row.foto ? process.env.BASE_URL + `/profil/` + row.foto : process.env.BASE_URL + `/profile/default.png`,
                     }));
 
                     res.json({ status: 200, values: { ada_pemilihan: pemilihan, pemilihan_ketua_id, startDate, endDate, pemilian_ketua: rows, calon_ketua: result } });
@@ -125,11 +125,88 @@ exports.showDetailCalon = async (req, res) => {
           total_pemilih: row.total_pemilih,
           nama_lengkap: row.nama_lengkap,
           tanggal_lahir: row.tanggal_lahir,
-          foto: process.env.BASE_URL + `/profil/` + row.foto,
+          foto: row.foto ? process.env.BASE_URL + `/profil/` + row.foto : process.env.BASE_URL + `/profile/default.png`,
         }));
-
         res.status(200).json({ result });
+      }
+    }
+  )
+}
 
+
+exports.isAbleToVote = async (req, res) => {
+  const warga_id = req.decoded.warga_id
+  connection.query(`SELECT hak_pilih FROM warga WHERE warga_id=${warga_id}`,
+    (error, rows, fields) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ status: 500, message: 'Internal server error' });
+      } else {
+        const hak_pilih = rows[0].hak_pilih
+        if (hak_pilih == 1) {
+          return res.status(200).json({ status: 200, isAbleToVote: true });
+        } else {
+          return res.status(201).json({ status: 201, isAbleToVote: false });
+        }
+      }
+    }
+  )
+
+}
+
+exports.voteCalonKetua = async (req, res) => {
+  const warga_id = req.decoded.warga_id
+  const calon_ketua_id = req.body.calon_ketua_id
+
+  if (!calon_ketua_id || calon_ketua_id == undefined || calon_ketua_id == "") {
+    return res.status(400).json({ status: 400, message: 'Harus memilih salah satu' });
+  }
+
+  connection.query(`SELECT * FROM calon_ketua WHERE calon_ketua_id=?`, calon_ketua_id,
+    (error, rows, fields) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ status: 500, message: 'Internal server error' });
+      } else {
+        if (rows.length == 0) {
+          return res.status(400).json({ status: 400, message: 'Tidak ada calon ketua' });
+        } else {
+          connection.query(`SELECT hak_pilih FROM warga WHERE warga_id=?`, warga_id,
+            (error, rows, fields) => {
+              if (error) {
+                console.log(error);
+                return res.status(500).json({ status: 500, message: 'Internal server error' });
+              } else {
+                const hak_pilih = rows[0].hak_pilih
+                if (hak_pilih != 1) {
+                  return res.status(400).json({ status: 400, message: 'Kamu tidak memiliki hak pilih' });
+                } else {
+                  const qIncTotalPemilih = `UPDATE calon_ketua SET total_pemilih = total_pemilih + 1 WHERE calon_ketua_id=?`
+                  connection.query(qIncTotalPemilih, calon_ketua_id,
+                    (error, r, fields) => {
+                      if (error) {
+                        console.log(error);
+                        return res.status(500).json({ status: 500, message: 'Internal server error' });
+                      } else {
+                        const qResetHakPilih = `UPDATE warga SET hak_pilih=0 WHERE warga_id=?`
+                        connection.query(qResetHakPilih, warga_id,
+                          (error, r, fields) => {
+                            if (error) {
+                              console.log(error);
+                              return res.status(500).json({ status: 500, message: 'Internal server error' });
+                            } else {
+                              return res.status(200).json({ status: 200, message: 'Berhasil melakukan pemilihan' });
+                            }
+                          }
+                        )
+                      }
+                    }
+                  )
+                }
+              }
+            }
+          )
+        }
       }
     }
   )

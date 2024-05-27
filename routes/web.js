@@ -66,4 +66,10 @@ module.exports = function (app) {
 
     app.route('/api/web/calon-ketua/:calon_ketua_id')
         .get(WebVerification, WebController.pemilihan_ketua_controller.showDetailCalon);
+
+    app.route('/api/web/calon-ketua/vote/check')
+        .get(WebVerification, WebController.pemilihan_ketua_controller.isAbleToVote);
+
+    app.route('/api/web/calon-ketua/vote')
+        .post(WebVerification, WebController.pemilihan_ketua_controller.voteCalonKetua);
 }
