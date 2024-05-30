@@ -112,16 +112,16 @@ module.exports = function (app) {
     app.route('/api/admin/warga')
         .get(api_admin.warga_controller.warga); //
 
-    app.route('/api/admin/warga/:id')
+    app.route('/api/admin/warga/:warga_id')
         .get(api_admin.warga_controller.wargaid); //
 
     app.route('/api/admin/warga/add')
         .post(api_admin.warga_controller.wargapost); //
 
-    app.route('/api/admin/warga/edit/:id') //
+    app.route('/api/admin/warga/edit/:warga_id') //
         .put(api_admin.warga_controller.wargaput) //
 
-    app.route('/api/admin/warga/delete/:id')
+    app.route('/api/admin/warga/delete/:warga_id')
         .delete(api_admin.warga_controller.wargadelete) //
 
 

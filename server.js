@@ -1,24 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-var morgan = require('morgan')
-var cors = require('cors')
+const morgan = require('morgan')
+const cors = require('cors')
 const app = express();
 require('dotenv').config()
 
 
 //parse application json
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use(cors());
 
 //routes
-var routesAdmin = require('./routes/admin');
-var routesUser = require('./routes/user');
-var routesWeb = require('./routes/web');
+const routesAdmin = require('./routes/admin');
+const routesUser = require('./routes/user');
+const routesWeb = require('./routes/web');
 app.use("/umkm/", express.static("upload/umkm"));
-app.use("/profile/", express.static("upload/profile"));
+app.use("/warga/", express.static("upload/warga"));
 app.use("/berita/", express.static("upload/berita"));
 routesAdmin(app);
 routesUser(app);
