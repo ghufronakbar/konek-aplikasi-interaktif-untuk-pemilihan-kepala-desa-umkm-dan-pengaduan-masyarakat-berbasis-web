@@ -80,13 +80,13 @@ module.exports = function (app) {
     app.route('/api/admin/umkm')
         .get(api_admin.umkm_controller.umkmjoin); //
 
-    app.route('/api/admin/umkm/:id')
+    app.route('/api/admin/umkm/:umkm_id')
         .get(api_admin.umkm_controller.umkmjoinid);
 
-    app.route('/api/admin/umkm/delete/:id')
+    app.route('/api/admin/umkm/delete/:umkm_id')
         .delete(api_admin.umkm_controller.umkmdelete); //
 
-    app.route('/api/admin/umkm/approve/:id')
+    app.route('/api/admin/umkm/approve/:umkm_id')
         .put(api_admin.umkm_controller.umkmputapprove); //
 
 
@@ -97,13 +97,13 @@ module.exports = function (app) {
     app.route('/api/admin/jenisumkm/add')
         .post(api_admin.umkm_controller.jenisumkmpost); //
 
-    app.route('/api/admin/jenisumkm/edit/:id')
+    app.route('/api/admin/jenisumkm/edit/:jenis_umkm_id')
         .put(api_admin.umkm_controller.jenisumkmput); //
 
-    app.route('/api/admin/jenisumkm/delete/:id')
+    app.route('/api/admin/jenisumkm/delete/:jenis_umkm_id')
         .delete(api_admin.umkm_controller.jenisumkmdelete); //
 
-    app.route('/api/admin/jenisumkm/:id')
+    app.route('/api/admin/jenisumkm/:jenis_umkm_id')
         .get(api_admin.umkm_controller.jenisumkmid); //
 
 
