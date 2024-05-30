@@ -10,23 +10,23 @@ module.exports = function (app) {
     app.route('/api/admin/berita')
         .get(api_admin.berita_controller.berita);    //
 
-    app.route('/api/admin/berita/:id') // 
+    app.route('/api/admin/berita/:berita_id') // 
         .get(api_admin.berita_controller.beritaid)
 
     app.route('/api/admin/berita/add')
         .post(api_admin.berita_controller.beritapost); //
 
-    app.route('/api/admin/berita/edit/:id')
+    app.route('/api/admin/berita/edit/:berita_id')
         .put(api_admin.berita_controller.beritaput); //
 
-    app.route('/api/admin/berita/delete/:id')
+    app.route('/api/admin/berita/delete/:berita_id')
         .delete(api_admin.berita_controller.beritadelete); //
 
-    app.route('/api/admin/berita/publikasi/:id')
+    app.route('/api/admin/berita/publikasi/:berita_id')
         .put(api_admin.berita_controller.beritapublikasi); //
 
-    app.route('/api/admin/berita/prioritas/:id')
-        .put(api_admin.berita_controller.beritapublikasi); //
+    app.route('/api/admin/berita/prioritas/:berita_id')
+        .put(api_admin.berita_controller.beritaprioritas); //
 
 
     //INFORMASI DESA
