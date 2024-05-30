@@ -14,12 +14,14 @@ app.use(morgan('dev'));
 app.use(cors());
 
 //routes
-var routes = require('./routes/admin');
-var routes = require('./routes/user');
-var routes = require('./routes/web');
+var routesAdmin = require('./routes/admin');
+var routesUser = require('./routes/user');
+var routesWeb = require('./routes/web');
 app.use("/umkm/", express.static("upload/umkm"));
 app.use("/profile/", express.static("upload/warga"));
-routes(app);
+routesAdmin(app);
+routesUser(app);
+routesWeb(app);
 
 //menu routes index
 app.use('/auth', require('./middleware'));
