@@ -86,7 +86,7 @@ exports.beritapost = async (req, res) => {
         }
         const { judul, subjudul, isi } = req.body;
         const gambar = req.file ? req.file.filename : null;
-        if(!(judul || subjudul || isi)){
+        if(!judul || !subjudul || !isi){
             return res.status(400).json({ status: 400, message: 'Form tidak boleh kosong' });
         }
         if (!gambar) {
@@ -119,8 +119,9 @@ exports.beritaput = async (req, res) => {
         }
         const { judul, subjudul, isi } = req.body;
         const gambar = req.file ? req.file.filename : null;
+        console.log({gambar})
         const { berita_id } = req.params
-        if(!(judul || subjudul || isi)){
+        if(!judul || !subjudul || !isi){
             return res.status(400).json({ status: 400, message: 'Lengkapi form' });
         }
         if (gambar == null) {

@@ -1,6 +1,5 @@
 'use strict';
 
-var response = require('../../res');
 var connection = require('../../connection');
 var md5 = require('md5');
 
@@ -63,7 +62,7 @@ exports.pemilihanketuadesa = function (req, res) {
                                     namalengkap: ckRow.namalengkap,
                                     nik: ckRow.nik,
                                     tanggal_lahir: ckRow.tanggal_lahir,
-                                    foto: ckRow.foto,
+                                    foto: ckRow.foto ? process.env.BASE_URL + `/warga/` + ckRow.foto : process.env.BASE_URL + `/warga/default.png`,
                                     deskripsi_calon: ckRow.deskripsi_calon,
                                     total_pemilih: ckRow.total_pemilih
                                 });
@@ -73,9 +72,7 @@ exports.pemilihanketuadesa = function (req, res) {
                         // Tambahkan objek pemilihan ketua ke dalam hasil
                         hasil.push(pemilihanKetua);
                     });
-
-                    // Kirimkan hasil akhir sebagai respons
-                    response.ok({ values: hasil }, res);
+                    return res.status(200).json({ status: 200, values: hasil })
                 }
             });
         }
@@ -143,7 +140,7 @@ exports.pemilihanketuadesaid = function (req, res) {
                                     namalengkap: ckRow.namalengkap,
                                     nik: ckRow.nik,
                                     tanggal_lahir: ckRow.tanggal_lahir,
-                                    foto: ckRow.foto,
+                                    foto: ckRow.foto ? process.env.BASE_URL + `/warga/` + ckRow.foto : process.env.BASE_URL + `/warga/default.png`,
                                     deskripsi_calon: ckRow.deskripsi_calon,
                                     total_pemilih: ckRow.total_pemilih
                                 });
@@ -155,7 +152,7 @@ exports.pemilihanketuadesaid = function (req, res) {
                     });
 
                     // Kirimkan hasil akhir sebagai respons
-                    response.ok({ values: hasil }, res);
+                    return res.status(200).json({ status: 200, values: hasil })
                 }
             });
         }
@@ -165,16 +162,33 @@ exports.pemilihanketuadesaid = function (req, res) {
 
 //POST PEMILIHAN KETUA
 exports.pemilihanketuapost = function (req, res) {
-    let tanggal_mulai = new Date(req.body.tanggal_mulai); // Konversi ke objek Date
-    let tanggal_sekarang = new Date(); // Tanggal saat ini
-    let tanggal_selesai = new Date(req.body.tanggal_selesai);
+    let tanggal_mulai = req.body.tanggal_mulai;
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    let tanggal_sekarang = `${year}-${month}-${day}`;
+    let tanggal_selesai = req.body.tanggal_selesai;
     let judul = req.body.judul;
     let deskripsi = req.body.deskripsi;
 
-    // Validasi tanggal_mulai harus lebih besar dari tanggal sekarang
-    if (tanggal_mulai <= tanggal_sekarang) {
-        return response.error("Tanggal mulai harus lebih besar dari tanggal sekarang", res);
+    console.log({ tanggal_mulai, tanggal_selesai, judul, deskripsi, tanggal_sekarang })
+
+    if (!tanggal_mulai || !tanggal_selesai || !judul || !deskripsi) {
+        return res.status(400).json({ status: 400, message: `Field tidak boleh kosong` })
     }
+    // Validasi tanggal_mulai harus lebih besar dari tanggal sekarang
+
+    if (tanggal_mulai > tanggal_selesai) {
+        return res.status(400).json({ status: 400, message: `Tanggal mulai tidak boleh lebih dari tanggal selesai` })
+    }
+
+    if (tanggal_mulai <= tanggal_sekarang) {
+        return res.status(400).json({ status: 400, message: `Tanggal mulai tidak boleh kurang dari tanggal sekarang` })
+    }
+
+    tanggal_mulai = new Date(tanggal_mulai)
+    tanggal_selesai = new Date(tanggal_selesai)
 
     // Query untuk memeriksa tanggal yang bertabrakan
     connection.query('SELECT * FROM pemilihan_ketua WHERE (tanggal_mulai BETWEEN ? AND ? OR tanggal_selesai BETWEEN ? AND ?)',
@@ -183,7 +197,7 @@ exports.pemilihanketuapost = function (req, res) {
             if (error) {
                 console.log(error);
                 // Kirim pesan kesalahan jika terjadi kesalahan pada query
-                response.error("Gagal memeriksa tanggal yang bertabrakan", res);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
                 // Jika tidak ada tanggal yang bertabrakan, lakukan penambahan data baru
                 if (rows.length === 0) {
@@ -193,15 +207,15 @@ exports.pemilihanketuapost = function (req, res) {
                             if (error) {
                                 console.log(error);
                                 // Kirim pesan kesalahan jika terjadi kesalahan pada saat penambahan data
-                                response.error("Gagal menambahkan data pemilihan ketua", res);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
                             } else {
                                 // Kirim pesan sukses jika penambahan data berhasil
-                                response.ok("Berhasil menambahkan data pemilihan ketua", res);
+                                return res.status(200).json({ status: 200, message: `Berhasil menambahkankan pemilihan ketua` })
                             }
                         });
                 } else {
                     // Kirim pesan kesalahan jika terdapat tanggal yang bertabrakan
-                    response.error("Tanggal mulai dan tanggal selesai tidak boleh bertabrakan dengan yang sudah ada", res);
+                    return res.status(400).json({ status: 400, message: `Tanggal mulai dan tanggal selesai tidak boleh bertabrakan dengan yang sudah ada` })
                 }
             }
         });
@@ -210,18 +224,33 @@ exports.pemilihanketuapost = function (req, res) {
 
 //PUT PEMILIHAN KETUA
 exports.pemilihanketuaput = function (req, res) {
-    let tanggal_mulai = new Date(req.body.tanggal_mulai); // Konversi ke objek Date
-    let tanggal_selesai = new Date(req.body.tanggal_selesai);
+    let tanggal_mulai = req.body.tanggal_mulai;
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    let tanggal_sekarang = `${year}-${month}-${day}`;
+    let tanggal_selesai = req.body.tanggal_selesai;
     let judul = req.body.judul;
     let deskripsi = req.body.deskripsi;
+
     let id = req.params.id;
 
-    let tanggalSekarang = new Date(); // Tanggal sekarang
 
-    // Validasi tanggal_mulai harus lebih besar dari tanggal sekarang
-    if (tanggal_mulai <= tanggalSekarang) {
-        return response.error("Tanggal mulai harus lebih besar dari tanggal sekarang", res);
+    if (!tanggal_mulai || !tanggal_selesai || !judul || !deskripsi) {
+        return res.status(400).json({ status: 400, message: `Field tidak boleh kosong` })
     }
+
+    if (tanggal_mulai > tanggal_selesai) {
+        return res.status(400).json({ status: 400, message: `Tanggal mulai tidak boleh lebih dari tanggal selesai` })
+    }
+
+    if (tanggal_mulai <= tanggal_sekarang) {
+        return res.status(400).json({ status: 400, message: `Tanggal mulai tidak boleh kurang dari tanggal sekarang` })
+    }
+
+    tanggal_mulai = new Date(tanggal_mulai)
+    tanggal_selesai = new Date(tanggal_selesai)
 
     // Query untuk memeriksa tanggal yang bertabrakan, tidak termasuk data dengan pemilihan_ketua_id yang akan diedit
     connection.query('SELECT * FROM pemilihan_ketua WHERE pemilihan_ketua_id != ? AND (tanggal_mulai BETWEEN ? AND ? OR tanggal_selesai BETWEEN ? AND ?)',
@@ -230,7 +259,7 @@ exports.pemilihanketuaput = function (req, res) {
             if (error) {
                 console.log(error);
                 // Kirim pesan kesalahan jika terjadi kesalahan pada query
-                response.error("Gagal memeriksa tanggal yang bertabrakan", res);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
                 // Jika tidak ada tanggal yang bertabrakan, lakukan update data
                 if (rows.length === 0) {
@@ -240,15 +269,15 @@ exports.pemilihanketuaput = function (req, res) {
                             if (error) {
                                 console.log(error);
                                 // Kirim pesan kesalahan jika terjadi kesalahan pada saat update data
-                                response.error("Gagal mengedit data pemilihan ketua", res);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
                             } else {
                                 // Kirim pesan sukses jika update data berhasil
-                                response.ok("Berhasil mengedit data pemilihan ketua", res);
+                                return res.status(200).json({ status: 200, message: `Berhasil mengedit pemilihan ketua` })
                             }
                         });
                 } else {
                     // Kirim pesan kesalahan jika terdapat tanggal yang bertabrakan
-                    response.error("Tanggal mulai dan tanggal selesai tidak boleh bertabrakan dengan yang sudah ada", res);
+                    return res.status(400).json({ status: 400, message: `Tanggal mulai dan tanggal selesai tidak boleh bertabrakan dengan yang sudah ada` })
                 }
             }
         });
@@ -263,8 +292,9 @@ exports.pemilihanketuadelete = function (req, res) {
         function (error, rows, fields) {
             if (error) {
                 console.log(error);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
-                response.ok("Berhasil Menghapus Data Pemilihan Ketua!", res)
+                return res.status(200).json({ status: 200, message: `Berhasil menghapus pemilihan ketua` })
             };
         })
 }
@@ -280,35 +310,67 @@ exports.calonketua = function (req, res) {
     JOIN warga w ON ck.warga_id = w.warga_id`, function (error, rows, fields) {
         if (error) {
             console.log(error);
+            return res.status(500).json({ status: 500, error: 'Database query error' });
         } else {
-            response.ok(rows, res)
-        };
-    }
-    )
+            const formattedRows = [];
+            rows.forEach(row => {
+                formattedRows.push({
+                    pemilihan_ketua_id: row.pemilihan_ketua_id,
+                    calon_ketua_id: row.calon_ketua_id,
+                    warga_id: row.warga_id,
+                    namalengkap: row.namalengkap,
+                    nik: row.nik,
+                    tanggal_lahir: row.tanggal_lahir,
+                    foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/warga/default.png`,
+                    deskripsi_calon: row.deskripsi_calon,
+                    total_pemilih: row.total_pemilih
+                });
+            });
+
+            return res.status(200).json({ status: 200, values: formattedRows });
+        }
+    });
 };
 
 //GET ID CALON KETUA
 exports.calonketuaid = function (req, res) {
-    let id = req.params.id
+    const { id } = req.params
     connection.query(`SELECT ck.pemilihan_ketua_id, ck.calon_ketua_id, ck.warga_id, w.nama_lengkap AS namalengkap,
     w.nik, w.tanggal_lahir, w.foto, ck.deskripsi AS deskripsi_calon, ck.total_pemilih
     FROM calon_ketua ck
-    JOIN warga w ON ck.warga_id = w.warga_id WHERE ck.calon_ketua_id=?`,[id], function (error, rows, fields) {
+    JOIN warga w ON ck.warga_id = w.warga_id`, id, function (error, rows, fields) {
         if (error) {
             console.log(error);
+            return res.status(500).json({ status: 500, error: 'Database query error' });
         } else {
-            response.ok(rows, res)
-        };
-    }
-    )
+            const formattedRows = [];
+            rows.forEach(row => {
+                formattedRows.push({
+                    pemilihan_ketua_id: row.pemilihan_ketua_id,
+                    calon_ketua_id: row.calon_ketua_id,
+                    warga_id: row.warga_id,
+                    namalengkap: row.namalengkap,
+                    nik: row.nik,
+                    tanggal_lahir: row.tanggal_lahir,
+                    foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/warga/default.png`,
+                    deskripsi_calon: row.deskripsi_calon,
+                    total_pemilih: row.total_pemilih
+                });
+            });
+
+            return res.status(200).json({ status: 200, values: formattedRows });
+        }
+    });
 };
 
 
 //POST CALON KETUA
 exports.calonketuapost = function (req, res) {
-    let pemilihan_ketua_id = req.body.pemilihan_ketua_id;
-    let warga_id = req.body.warga_id;
-    let deskripsi = req.body.deskripsi;
+    const { pemilihan_ketua_id, warga_id, deskripsi } = req.body
+
+    if (!pemilihan_ketua_id || !warga_id || !deskripsi) {
+        return res.status(400).json({ status: 400, message: `Field tidak boleh kosong` })
+    }
 
     // Query untuk memeriksa apakah warga_id sudah terdaftar dalam pemilihan ketua
     connection.query('SELECT * FROM calon_ketua WHERE pemilihan_ketua_id = ? AND warga_id = ?',
@@ -317,7 +379,7 @@ exports.calonketuapost = function (req, res) {
             if (error) {
                 console.log(error);
                 // Kirim pesan kesalahan jika terjadi kesalahan pada query
-                response.error("Gagal memeriksa warga_id", res);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
                 // Jika tidak ada warga_id yang sama, lakukan insert data
                 if (rows.length === 0) {
@@ -327,15 +389,15 @@ exports.calonketuapost = function (req, res) {
                             if (error) {
                                 console.log(error);
                                 // Kirim pesan kesalahan jika terjadi kesalahan pada saat insert data
-                                response.error("Gagal menginputkan data calon ketua", res);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
                             } else {
                                 // Kirim pesan sukses jika insert data berhasil
-                                response.ok("Berhasil menginputkan data calon ketua", res);
+                                return res.status(200).json({ status: 200, message: `Berhasil menambahkan calon pada pemilihan ini` })
                             }
                         });
                 } else {
                     // Kirim pesan kesalahan jika warga_id sudah terdaftar dalam pemilihan ketua
-                    response.error("Warga tersebut sudah menjadi calon ketua dalam pemilihan ketua yang sama", res);
+                    return res.status(400).json({ status: 400, message: `Warga tersebut sudah menjadi calon ketua dalam pemilihan ketua yang sama` })
                 }
             }
         });
@@ -346,13 +408,18 @@ exports.calonketuaput = function (req, res) {
     let deskripsi = req.body.deskripsi;
     let id = req.params.id;
 
+    if (!deskripsi) {
+        return res.status(400).json({ status: 400, message: `Deskripsi tidak boleh kosong` })
+    }
+
     connection.query('UPDATE calon_ketua SET deskripsi=? WHERE calon_ketua_id=?',
         [deskripsi, id],
         function (error, rows, fields) {
             if (error) {
                 console.log(error);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
-                response.ok("Berhasil Mengedit Data Calon Ketua!", res)
+                return res.status(200).json({ status: 200, message: "Berhasil mengedit deskripsi calon ketua" });
             };
         })
 };
@@ -366,7 +433,7 @@ exports.calonketuadelete = function (req, res) {
             if (error) {
                 console.log(error);
             } else {
-                response.ok("Berhasil Menghapus Data Calon Ketua!", res)
+                return res.status(200).json({ status: 200, message: `Berhasil menghapus calon ketua dari pemilihan ini` })
             };
         })
 }
