@@ -8,7 +8,7 @@ const verifikasi = require('../../middleware/verifikasi-user');
 
 
 //GET INFORMASI DESA
-exports.infoPemilihan = function (req, res) {
+exports.info_pemilihan = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         connection.query('SELECT pemilihan_ketua_id, tanggal_mulai, tanggal_selesai FROM pemilihan_ketua', function (error, rows, fields) {
@@ -38,7 +38,7 @@ exports.infoPemilihan = function (req, res) {
     });
 };
 
-exports.infoPemilihanDetail = function (req, res) {
+exports.info_pemilihan_detail = function (req, res) {
     let token = req.params.token;
     const pemilihan_ketua_id = req.params.pemilihan_ketua_id;
     verifikasi(token)(req, res, function () {
@@ -66,7 +66,7 @@ exports.infoPemilihanDetail = function (req, res) {
 }
 
 
-exports.infoCalonPemilihan = function (req, res) {
+exports.info_calon_pemilihan = function (req, res) {
     let token = req.params.token;
     const pemilihan_ketua_id = req.params.pemilihan_ketua_id;
     verifikasi(token)(req, res, function () {
@@ -83,7 +83,18 @@ exports.infoCalonPemilihan = function (req, res) {
                     if (rows.length === 0) {
                         res.status(404).json({ status: 404, message: 'No candidates found for the given pemilihan_ketua_id' });
                     } else {
-                        res.json({ status: 200, data: rows });
+                        let result = []
+                        rows.forEach(row => {
+                            result.push({
+                                calon_ketua_id: row.calon_ketua_id,
+                                pemilihan_ketua_id: row.pemilihan_ketua_id,
+                                warga_id: row.warga_id,
+                                nama_lengkap: row.nama_lengkap,
+                                tanggal_lahir: row.tanggal_lahir,
+                                foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
+                            })
+                        });
+                        res.json({ status: 200, data: result });
                     }
                 }
             }
@@ -91,7 +102,7 @@ exports.infoCalonPemilihan = function (req, res) {
     })
 }
 
-exports.infoDetailCalonPemilihan = function (req, res) {
+exports.info_detail_calon_pemilihan = function (req, res) {
     let token = req.params.token;
     const calon_ketua_id = req.params.calon_ketua_id;
     verifikasi(token)(req, res, function () {
@@ -108,6 +119,7 @@ exports.infoDetailCalonPemilihan = function (req, res) {
                     if (rows.length === 0) {
                         res.status(404).json({ status: 404, message: 'No candidates found for the given calon_ketua_id' });
                     } else {
+                        rows[0].foto = rows[0].foto ? process.env.BASE_URL + `/warga/` + rows[0].foto : process.env.BASE_URL + `/default/profile.png`,
                         res.json({ status: 200, data: rows[0] });
                     }
                 }
@@ -115,7 +127,7 @@ exports.infoDetailCalonPemilihan = function (req, res) {
         );
     })
 }
-exports.cekHakPilih = function (req, res) {
+exports.cek_hak_pilih = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         var warga_id = req.decoded.warga_id;
@@ -137,7 +149,7 @@ exports.cekHakPilih = function (req, res) {
     })
 }
 
-exports.updateVote = function (req, res) {
+exports.update_vote = function (req, res) {
     let token = req.body.token;
     let calon_ketua_id  = req.body.calon_ketua_id ;
 

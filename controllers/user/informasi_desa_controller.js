@@ -7,7 +7,7 @@ const verifikasi = require('../../middleware/verifikasi-user');
 
 
 //GET INFORMASI DESA
-exports.informasidesapublished = function (req, res) {
+exports.informasi_desa_published = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         var warga_id = req.decoded.warga_id
@@ -25,7 +25,7 @@ exports.informasidesapublished = function (req, res) {
 };
 
 //PENGURUS DESA
-exports.penguruspublished = function (req, res) {
+exports.pengurus_published = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         connection.query(`SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, 
@@ -36,7 +36,16 @@ exports.penguruspublished = function (req, res) {
             if (error) {
                 console.log(error);
             } else {
-                response.ok(rows, res)
+                let result =[]
+                rows.forEach(row => {
+                    result.push({
+                        pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
+                        nama_lengkap: row.nama_lengkap,
+                        foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
+                        jabatan: row.jabatan,
+                    })
+                });
+                return res.status(200).json({status:200, values:result})
             };
         }
         )

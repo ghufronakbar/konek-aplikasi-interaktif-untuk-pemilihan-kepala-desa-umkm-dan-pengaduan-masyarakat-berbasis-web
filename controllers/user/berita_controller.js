@@ -6,7 +6,7 @@ var md5 = require('md5');
 const verifikasi = require('../../middleware/verifikasi-user');
 
 // Home_____________________________
-exports.beritapublishedhome = function (req, res) {
+exports.berita_published_home = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         connection.query(
@@ -26,12 +26,20 @@ exports.beritapublishedhome = function (req, res) {
                     console.log(error);
                     response.error("Failed to get news", res);
                 } else {
-
-                    // Konversi objek hasil ke dalam array values
-                    const values = Object.values(rows);
-
-                    // Response JSON
-                    response.ok(values, res);
+                    const beritaList = [];
+                    rows.forEach((row) => {
+                        beritaList.push({
+                            berita_id: row.berita_id,
+                            judul: row.judul,
+                            subjudul: row.subjudul,
+                            tanggal: row.tanggal,
+                            isi: row.isi,
+                            gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/default/berita.jpg`,
+                            publikasi: row.publikasi,
+                            prioritas: row.prioritas
+                        });
+                    });
+                    return res.status(200).json({ status: 200, values: beritaList });
                 }
             }
         );
@@ -39,7 +47,7 @@ exports.beritapublishedhome = function (req, res) {
 };
 
 // berita prioritas-Done
-exports.beritaprioritas = function (req, res) {
+exports.berita_prioritas = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         connection.query(
@@ -57,10 +65,20 @@ exports.beritaprioritas = function (req, res) {
                     console.log(error);
                     response.error("Failed to get news", res);
                 } else {
-                    // Konversi objek hasil ke dalam array values
-                    const values = Object.values(rows);
-                    // Response JSON
-                    response.ok(values, res);
+                    const beritaList = [];
+                    rows.forEach((row) => {
+                        beritaList.push({
+                            berita_id: row.berita_id,
+                            judul: row.judul,
+                            subjudul: row.subjudul,
+                            tanggal: row.tanggal,
+                            isi: row.isi,
+                            gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/default/berita.jpg`,
+                            publikasi: row.publikasi,
+                            prioritas: row.prioritas
+                        });
+                    });
+                    return res.status(200).json({ status: 200, values: beritaList });
                 }
             }
         );
@@ -75,7 +93,7 @@ exports.beritaprioritas = function (req, res) {
 
 
 
-exports.beritapublished = function (req, res) {
+exports.berita_published = function (req, res) {
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
         connection.query(
@@ -95,20 +113,27 @@ exports.beritapublished = function (req, res) {
                     console.log(error);
                     response.error("Failed to get comments for news", res);
                 } else {
-
-
-                    // Konversi objek hasil ke dalam array values
-                    const values = Object.values(rows);
-
-                    // Response JSON
-                    response.ok(values, res);
+const beritaList = [];
+            rows.forEach((row) => {
+                beritaList.push({
+                    berita_id: row.berita_id,
+                    judul: row.judul,
+                    subjudul: row.subjudul,
+                    tanggal: row.tanggal,
+                    isi: row.isi,
+                    gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/default/berita.jpg`,
+                    publikasi: row.publikasi,
+                    prioritas: row.prioritas
+                });
+            });
+            return res.status(200).json({ status: 200, values: beritaList });
                 }
             }
         );
     })
 };
 
-exports.beritapublishedid = function (req, res) {
+exports.berita_published_id = function (req, res) {
     let id = req.params.id;
     let token = req.params.token;
     verifikasi(token)(req, res, function () {
@@ -147,20 +172,20 @@ exports.beritapublishedid = function (req, res) {
                             if (item.warga_id == warga_id) {
                                 akumulasikan[item.berita_id].komentar.push({
                                     komentar_id: item.komentar_id || 0,
-                                    isi: item.komentar_isi || "", // Ganti null dengan string kosong
-                                    tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
-                                    warga_id: item.warga_id || 0, // Ganti null dengan string kosong
-                                    namalengkap: "You" || "", // Ganti null dengan string kosong
-                                    foto: item.foto || "" // Ganti null dengan string kosong
+                                    isi: item.komentar_isi || "", 
+                                    tanggal: item.komentar_tanggal || "", 
+                                    warga_id: item.warga_id || 0, 
+                                    namalengkap: "You" || "", 
+                                    foto: item.foto ? process.env.BASE_URL + `/warga/` + item.foto : process.env.BASE_URL + `/default/profile.png`,
                                 });
                             } else {
                                 akumulasikan[item.berita_id].komentar.push({
                                     komentar_id: item.komentar_id || 0,
-                                    isi: item.komentar_isi || "", // Ganti null dengan string kosong
-                                    tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
-                                    warga_id: item.warga_id || 0, // Ganti null dengan string kosong
-                                    namalengkap: item.nama_lengkap || "", // Ganti null dengan string kosong
-                                    foto: item.foto || "" // Ganti null dengan string kosong
+                                    isi: item.komentar_isi || "", 
+                                    tanggal: item.komentar_tanggal || "", 
+                                    warga_id: item.warga_id || 0, 
+                                    namalengkap: item.nama_lengkap || "", 
+                                    foto: item.foto ? process.env.BASE_URL + `/warga/` + item.foto : process.env.BASE_URL + `/default/profile.png`,
                                 });
                             }
                         } else {
@@ -172,17 +197,17 @@ exports.beritapublishedid = function (req, res) {
                                     subjudul: item.subjudul,
                                     tanggal: item.tanggal,
                                     isi: item.isi,
-                                    gambar: item.gambar,
+                                    gambar: item.gambar ? process.env.BASE_URL + `/berita/` + item.gambar : process.env.BASE_URL + `/default/berita.jpg`,
                                     publikasi: item.publikasi,
                                     prioritas: item.prioritas,
                                     komentar: [
                                         {
-                                            komentar_id: item.komentar_id || 0, // Ganti null dengan string kosong
-                                            isi: item.komentar_isi || "", // Ganti null dengan string kosong
-                                            tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
-                                            warga_id: item.warga_id || 0, // Ganti null dengan string kosong
-                                            namalengkap: "You" || "", // Ganti null dengan string kosong
-                                            foto: item.foto || "" // Ganti null dengan string kosong
+                                            komentar_id: item.komentar_id || 0, 
+                                            isi: item.komentar_isi || "", 
+                                            tanggal: item.komentar_tanggal || "", 
+                                            warga_id: item.warga_id || 0, 
+                                            namalengkap: "You" || "", 
+                                            foto: item.foto ? process.env.BASE_URL + `/warga/` + item.foto : process.env.BASE_URL + `/default/profile.png`,
                                         }
                                     ]
                                 };
@@ -194,17 +219,17 @@ exports.beritapublishedid = function (req, res) {
                                     subjudul: item.subjudul,
                                     tanggal: item.tanggal,
                                     isi: item.isi,
-                                    gambar: item.gambar,
+                                    gambar: item.gambar ? process.env.BASE_URL + `/berita/` + item.gambar : process.env.BASE_URL + `/default/berita.jpg`,
                                     publikasi: item.publikasi,
                                     prioritas: item.prioritas,
                                     komentar: [
                                         {
-                                            komentar_id: item.komentar_id || 0, // Ganti null dengan string kosong
-                                            isi: item.komentar_isi || "", // Ganti null dengan string kosong
-                                            tanggal: item.komentar_tanggal || "", // Ganti null dengan string kosong
-                                            warga_id: item.warga_id || 0, // Ganti null dengan string kosong
-                                            namalengkap: item.nama_lengkap || "", // Ganti null dengan string kosong
-                                            foto: item.foto || "" // Ganti null dengan string kosong
+                                            komentar_id: item.komentar_id || 0, 
+                                            isi: item.komentar_isi || "", 
+                                            tanggal: item.komentar_tanggal || "", 
+                                            warga_id: item.warga_id || 0, 
+                                            namalengkap: item.nama_lengkap || "", 
+                                            foto: item.foto ? process.env.BASE_URL + `/warga/` + item.foto : process.env.BASE_URL + `/default/profile.png`,
                                         }
                                     ]
                                 };
@@ -226,7 +251,7 @@ exports.beritapublishedid = function (req, res) {
 };
 
 
-exports.komentarBerita = function (req, res) {
+exports.komentar_berita = function (req, res) {
     const { token, isi, berita_id } = req.body;
     let now = new Date();
     let date_now =

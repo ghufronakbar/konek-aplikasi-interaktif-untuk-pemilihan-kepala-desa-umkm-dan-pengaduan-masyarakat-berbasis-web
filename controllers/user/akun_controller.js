@@ -13,6 +13,30 @@ const url = require("url");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
+const crypto = require('crypto')
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, './upload/warga/');
+  },
+  filename: function (req, file, cb) {
+      // Mendapatkan ekstensi file
+      const ext = file.originalname.split('.').pop();
+      // Membuat string acak sepanjang 6 karakter
+      const randomString = crypto.randomBytes(3).toString('hex');
+      // Menggabungkan nama file asli dengan string acak dan ekstensi
+      const newFilename = file.originalname.replace(`.${ext}`, `_${randomString}.${ext}`);
+      cb(null, newFilename);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB (dalam bytes)
+  },
+}).single("image");
 
 
 //LOGIN
@@ -78,7 +102,7 @@ exports.check_user = function (req, res) {
 };
 
 
-exports.infoUserLogin = function (req, res) {
+exports.info_user_login = function (req, res) {
   let token = req.params.token;
   verifikasi(token)(req, res, function () {
     var warga_id = req.decoded.warga_id
@@ -87,16 +111,26 @@ exports.infoUserLogin = function (req, res) {
         if (error) {
           console.log(error);
         } else {
-          console.log(rows);
-          response.ok(rows, res)
+          let response = []
+          rows.forEach(row => {
+            response.push({
+              warga_id: row.warga_id,
+              nik: row.nik,
+              kk: row.kk,
+              nama_lengkap: row.nama_lengkap,
+              tanggal_lahir: row.tanggal_lahir,
+              foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
+              hak_pilih: row.hak_pilih,
+            })
+          });
+          return res.status(200).json({ status: 200, values: response });
         }
       });
   })
 };
 
-exports.mob_update_profile = function (req, res) {
+exports.update_image_profile = function (req, res) {
   let token = req.params.token;
-  console.log(token);
   verifikasi(token)(req, res, function () {
     var warga_id = req.decoded.warga_id;
     connection.query(
@@ -108,55 +142,74 @@ exports.mob_update_profile = function (req, res) {
           console.log(error);
           res.status(500).send("Internal Server Error");
         } else {
-          console.log("cek ", rows[0].foto);
-          const uploadDirectory = path.join(
-            __dirname,
-            "..",
-            "..",
-            "upload",
-            "warga"
-          );
-
-          // Menggunakan modul url untuk mengurai URL
-          const parsedUrl = url.parse(rows[0].foto);
-
-          // Menggunakan modul path untuk mendapatkan nama file dari path
-          const fileName = path.basename(parsedUrl.pathname);
-          console.log(fileName);
-          // storage engine
-          const storage = multer.diskStorage({
-            destination: "./upload/warga",
-            filename: (req, file, cb) => {
-              return cb(null, fileName);
-            },
-          });
-
-          const upload = multer({
-            storage: storage,
-            limits: {
-              fileSize: 10 * 1024 * 1024, // 10 MB (dalam bytes)
-            },
-          }).single("image");
-          upload(req, res, function (err) {
-            if (err instanceof multer.MulterError) {
-              // Jika terjadi kesalahan dari multer (misalnya melebihi batas ukuran file)
-              return res.json({
-                success: 0,
-                message: err.message,
-              });
-            } else if (err) {
-              // Jika terjadi kesalahan lainnya
-              return res.json({
-                success: 0,
-                message: "Terjadi kesalahan saat mengunggah gambar",
-              });
-            }
-            res.json({
-              success: 200,
-              image_url: `/profile/${req.file.filename}`,
+          if (rows[0].foto == null) {
+            upload(req, res, function (err) {
+              if (err instanceof multer.MulterError) {
+                // Jika terjadi kesalahan dari multer (misalnya melebihi batas ukuran file)
+                return res.json({
+                  success: 0,
+                  message: err.message,
+                });
+              } else if (err) {
+                // Jika terjadi kesalahan lainnya
+                return res.json({
+                  success: 0,
+                  message: "Terjadi kesalahan saat mengunggah gambar",
+                });
+              }
+              connection.query(`UPDATE warga SET foto=? WHERE warga_id=?`, [req.file.filename, warga_id],
+                (error, rows) => {
+                  if (error) {
+                    return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                  } else {
+                    res.json({
+                      success: 200,
+                      image_url: req.file.filename,
+                    });
+                  }
+                }
+              )
             });
-          });
-          //   response.ok(rows, res);
+          } else{    
+            const previousPicture = rows[0].foto
+            if (previousPicture) {
+              try {
+                  // Hapus gambar sebelumnya dari direktori
+                  fs.unlinkSync(`upload/warga/${previousPicture}`);
+              } catch (err) {
+                  // Tangani kesalahan jika file tidak ditemukan atau gagal dihapus
+                  console.log('Failed to delete previous picture:', err);
+              }
+          }
+            upload(req, res, function (err) {
+              if (err instanceof multer.MulterError) {
+                // Jika terjadi kesalahan dari multer (misalnya melebihi batas ukuran file)
+                return res.json({
+                  success: 0,
+                  message: err.message,
+                });
+              } else if (err) {
+                // Jika terjadi kesalahan lainnya
+                return res.json({
+                  success: 0,
+                  message: "Terjadi kesalahan saat mengunggah gambar",
+                });
+              }
+              connection.query(`UPDATE warga SET foto=? WHERE warga_id=?`, [req.file.filename, warga_id],
+                (error, rows) => {
+                  if (error) {
+                    return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                  } else {
+
+                    res.json({
+                      success: 200,
+                      image_url: req.file.filename,
+                    });
+                  }
+                }
+              )
+            });
+          };
         }
       }
     );
@@ -165,7 +218,7 @@ exports.mob_update_profile = function (req, res) {
 
 
 //Post password Users match
-exports.mobaccountpassword = function (req, res) {
+exports.check_password = function (req, res) {
   let token = req.body.token;
   let password = req.body.password;
   verifikasi(token)(req, res, function () {
@@ -192,7 +245,7 @@ exports.mobaccountpassword = function (req, res) {
 };
 
 //PUT PASSWORD
-exports.mobpasswordedit = function (req, res) {
+exports.edit_password = function (req, res) {
   let new_password = req.body.new_password;
   let token = req.body.token;
   verifikasi(token)(req, res, function () {

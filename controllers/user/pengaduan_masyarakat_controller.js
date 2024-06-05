@@ -9,7 +9,7 @@ const fs = require("fs");
 
 const path = require("path");
 
-exports.createPengaduan = function (req, res) {
+exports.create_pengaduan = function (req, res) {
     const { subjek, isi, token } = req.body;
     let now = new Date();
     let date_now =

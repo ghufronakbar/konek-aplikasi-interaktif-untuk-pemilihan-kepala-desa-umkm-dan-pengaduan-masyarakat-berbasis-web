@@ -1,16 +1,13 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
+const response = require('../../res');
+const connection = require('../../connection');
 const verifikasi = require('../../middleware/verifikasi-user');
-const url = require("url");
-const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 
 
-exports.umkmpublishedhome = function (req, res) {
+exports.umkm_published_home = function (req, res) {
 	let token = req.params.token
 	verifikasi(token)(req, res, function () {
 		connection.query(`SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, 
@@ -27,33 +24,29 @@ exports.umkmpublishedhome = function (req, res) {
 				if (error) {
 					console.log(error);
 				} else {
-					response.ok(rows, res)
+					const umkmList = [];
+					rows.forEach((row) => {
+						umkmList.push({
+							umkm_id: row.umkm_id,
+							nama: row.nama,
+							nama_jenis_umkm: row.nama_jenis_umkm,
+							deskripsi: row.deskripsi,
+							gambar: row.gambar ? process.env.BASE_URL + `/umkm/` + row.gambar : process.env.BASE_URL + `/default/umkm.jpg`,
+							lokasi: row.lokasi,
+							approve: row.approve,
+							status: row.status,
+							warga_id: row.warga_id,
+							nama_lengkap: row.nama_lengkap
+						});
+					});
+					return res.status(200).json({ status: 200, values: umkmList });
 				};
 			}
 		)
 	})
 };
 
-exports.umkmpublishedhome = function (req, res) {
-	let token = req.params.token
-	verifikasi(token)(req, res, function () {
-		connection.query(`SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, 
-                        umkm.deskripsi, umkm.gambar, umkm.lokasi, warga.warga_id, 
-                        warga.nama_lengkap FROM umkm JOIN jenis_umkm JOIN warga 
-                        WHERE umkm.jenis_umkm_id = jenis_umkm.jenis_umkm_id AND 
-                        umkm.warga_id = warga.warga_id AND umkm.approve=2 AND umkm.status=1 
-                        ORDER BY umkm.umkm_id DESC LIMIT 2;`, function (error, rows, fields) {
-			if (error) {
-				console.log(error);
-			} else {
-				response.ok(rows, res)
-			};
-		}
-		)
-	})
-};
-
-exports.umkmpublished = function (req, res) {
+exports.umkm_published = function (req, res) {
 	let token = req.params.token
 	verifikasi(token)(req, res, function () {
 		connection.query(`SELECT umkm.umkm_id, umkm.nama, jenis_umkm.nama_jenis_umkm, 
@@ -65,14 +58,29 @@ exports.umkmpublished = function (req, res) {
 			if (error) {
 				console.log(error);
 			} else {
-				response.ok(rows, res)
+				const umkmList = [];
+				rows.forEach((row) => {
+					umkmList.push({
+						umkm_id: row.umkm_id,
+						nama: row.nama,
+						nama_jenis_umkm: row.nama_jenis_umkm,
+						deskripsi: row.deskripsi,
+						gambar: row.gambar ? process.env.BASE_URL + `/umkm/` + row.gambar : process.env.BASE_URL + `/default/umkm.jpg`,
+						lokasi: row.lokasi,
+						approve: row.approve,
+						status: row.status,
+						warga_id: row.warga_id,
+						nama_lengkap: row.nama_lengkap
+					});
+				});
+				return res.status(200).json({ status: 200, values: umkmList });
 			};
 		}
 		)
 	})
 };
 
-exports.umkmpublishedid = function (req, res) {
+exports.umkm_published_id = function (req, res) {
 	let id = req.params.id;
 	let token = req.params.token;
 	verifikasi(token)(req, res, function () {
@@ -86,15 +94,29 @@ exports.umkmpublishedid = function (req, res) {
 				if (error) {
 					console.log(error);
 				} else {
-					console.log(rows)
-					response.ok(rows, res)
+					const umkmList = [];
+					rows.forEach((row) => {
+						umkmList.push({
+							umkm_id: row.umkm_id,
+							nama: row.nama,
+							nama_jenis_umkm: row.nama_jenis_umkm,
+							deskripsi: row.deskripsi,
+							gambar: row.gambar ? process.env.BASE_URL + `/umkm/` + row.gambar : process.env.BASE_URL + `/default/umkm.jpg`,
+							lokasi: row.lokasi,
+							approve: row.approve,
+							status: row.status,
+							warga_id: row.warga_id,
+							nama_lengkap: row.nama_lengkap
+						});
+					});
+					return res.status(200).json({ status: 200, values: umkmList });
 				};
 			}
 		)
 	})
 };
 
-exports.getJenisUmkm = function (req, res) {
+exports.get_jenis_umkm = function (req, res) {
 	let token = req.params.token;
 	verifikasi(token)(req, res, function () {
 		const query = 'SELECT * FROM `jenis_umkm`';
@@ -102,7 +124,6 @@ exports.getJenisUmkm = function (req, res) {
 			if (error) {
 				console.log(error);
 			} else {
-				console.log(rows)
 				response.ok(rows, res)
 			};
 		});
@@ -150,18 +171,15 @@ exports.mob_upload_image = function (req, res) {
 				});
 			}
 
-			// Jika berhasil, Anda dapat mengakses informasi file yang diunggah
-			// melalui req.file
-			// var nama = req.file.filename;
 			res.json({
 				success: 200,
-				image_url: `http://192.168.0.104:5000/umkm/${req.file.filename}`,
+				image_url: req.file.filename,
 			});
 		});
 	});
 };
 
-exports.updateStatus = function (req, res) {
+exports.update_status = function (req, res) {
 	const {
 		status,
 		umkm_id,
@@ -176,13 +194,12 @@ exports.updateStatus = function (req, res) {
 			if (error) {
 				console.log(error);
 			} else {
-				console.log(rows)
 				response.ok(rows, res)
 			};
 		});
 	})
 };
-exports.createUmkm = function (req, res) {
+exports.create_umkm = function (req, res) {
 	const {
 		nama,
 		jenis_umkm_id,
@@ -194,8 +211,8 @@ exports.createUmkm = function (req, res) {
 
 	verifikasi(token)(req, res, function () {
 		var warga_id = req.decoded.warga_id;
-		const query = 'INSERT INTO `umkm`(`nama`, `jenis_umkm_id`, `deskripsi`, `gambar`, `lokasi`, `approve`, `status`, `warga_id`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)';
-		const values = [nama, jenis_umkm_id, deskripsi, gambar, lokasi, 0, 1, warga_id];
+		const query = 'INSERT INTO `umkm`(`nama`, `jenis_umkm_id`, `deskripsi`, `gambar`, `lokasi`, `warga_id`) VALUES ( ?, ?, ?, ?, ?, ?)';
+		const values = [nama, jenis_umkm_id, deskripsi, gambar, lokasi, warga_id];
 
 		connection.query(query, values, function (error, rows, fields) {
 			if (error) {
@@ -209,7 +226,7 @@ exports.createUmkm = function (req, res) {
 };
 
 
-exports.umkmSaya = function (req, res) {
+exports.umkm_saya = function (req, res) {
 	let token = req.params.token
 	verifikasi(token)(req, res, function () {
 		var warga_id = req.decoded.warga_id;
@@ -221,14 +238,29 @@ exports.umkmSaya = function (req, res) {
 			if (error) {
 				console.log(error);
 			} else {
-				response.ok(rows, res)
+				const umkmList = [];
+				rows.forEach((row) => {
+					umkmList.push({
+						umkm_id: row.umkm_id,
+						nama: row.nama,
+						nama_jenis_umkm: row.nama_jenis_umkm,
+						deskripsi: row.deskripsi,
+						gambar: row.gambar ? process.env.BASE_URL + `/umkm/` + row.gambar : process.env.BASE_URL + `/default/umkm.jpg`,
+						lokasi: row.lokasi,
+						approve: row.approve,
+						status: row.status,
+						warga_id: row.warga_id,
+						nama_lengkap: row.nama_lengkap
+					});
+				});
+				return res.status(200).json({ status: 200, values: umkmList });
 			};
 		}
 		)
 	})
 };
 
-exports.umkmSayaid = function (req, res) {
+exports.umkm_saya_id = function (req, res) {
 	let id = req.params.id;
 	let token = req.params.token;
 	verifikasi(token)(req, res, function () {
@@ -240,8 +272,29 @@ exports.umkmSayaid = function (req, res) {
 				if (error) {
 					console.log(error);
 				} else {
-					console.log(rows)
-					response.ok(rows, res)
+					const umkmList = [];
+					rows.forEach((row) => {
+						umkmList.push({
+							umkm_id: row.umkm_id,
+							nama: row.nama,
+							jenis_umkm_id: row.jenis_umkm_id,
+							deskripsi: row.deskripsi,
+							gambar: row.gambar ? process.env.BASE_URL + `/umkm/` + row.gambar : process.env.BASE_URL + `/default/umkm.jpg`,
+							lokasi: row.lokasi,
+							approve: row.approve,
+							status: row.status,
+							warga_id: row.warga_id,
+							nama_jenis_umkm: row.nama_jenis_umkm,
+							nik: row.nik,
+							kk: row.kk,
+							nama_lengkap: row.nama_lengkap,
+							tanggal_lahir: row.tanggal_lahir,
+							foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
+							hak_pilih: row.hak_pilih,
+							password: row.password
+						});
+					});
+					return res.status(200).json({ status: 200, values: umkmList });
 				};
 			}
 		)

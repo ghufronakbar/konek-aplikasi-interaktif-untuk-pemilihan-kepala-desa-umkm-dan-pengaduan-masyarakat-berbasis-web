@@ -1,125 +1,111 @@
 'use strict';
 
-module.exports = function (app) {
-    var api_user = require('../controllers/user');
+const ControllerUser = require('../controllers/user');
 
+module.exports = function (app) {
 
 
     // API MOBILE PHONE
-    // REGISTER
-
-
     // Login
     app.route('/api/user/login')
-        .post(api_user.auth_controller.login);
+        .post(ControllerUser.akun_controller.login);
     app.route('/api/user/check/:token')
-        .get(api_user.auth_controller.check_user);
+        .get(ControllerUser.akun_controller.check_user);
 
     // Home
     // fetch berita prioritas
     app.route('/api/user/berita-prioritas/:token')
-        .get(api_user.berita_controller.beritaprioritas);
+        .get(ControllerUser.berita_controller.berita_prioritas);
 
     app.route('/api/user/home/berita/:token')
-        .get(api_user.berita_controller.beritapublishedhome);
+        .get(ControllerUser.berita_controller.berita_published_home);
 
     app.route('/api/user/home/umkm/:token')
-        .get(api_user.umkm_controller.umkmpublishedhome);
+        .get(ControllerUser.umkm_controller.umkm_published_home);
 
     app.route('/api/user/home/pemilihan/:token')
-        .get(api_user.pemilihan_controller.infoPemilihan);
+        .get(ControllerUser.pemilihan_controller.info_pemilihan);
 
     // &akun
     app.route('/api/user/:token')
-        .get(api_user.auth_controller.infoUserLogin);
-
-
-
+        .get(ControllerUser.akun_controller.info_user_login);
 
     // Berita
     app.route('/api/user/berita/:token')
-        .get(api_user.berita_controller.beritapublished);
+        .get(ControllerUser.berita_controller.berita_published);
 
     app.route('/api/user/berita/:id/:token')
-        .get(api_user.berita_controller.beritapublishedid);
+        .get(ControllerUser.berita_controller.berita_published_id);
 
     app.route('/api/user/berita/komentar')
-        .post(api_user.berita_controller.komentarBerita);
-
+        .post(ControllerUser.berita_controller.komentar_berita);
 
 
     // UMKM
 
     app.route("/upload/umkm/:token")
-        .post(api_user.umkm_controller.mob_upload_image);
+        .post(ControllerUser.umkm_controller.mob_upload_image);
 
     app.route("/api/user/umkm/tambah")
-        .post(api_user.umkm_controller.createUmkm);
+        .post(ControllerUser.umkm_controller.create_umkm);
 
     app.route('/api/user/jenis-umkm/:token')
-        .get(api_user.umkm_controller.getJenisUmkm);
+        .get(ControllerUser.umkm_controller.get_jenis_umkm);
 
     app.route('/api/user/umkm/:token')
-        .get(api_user.umkm_controller.umkmpublished);
+        .get(ControllerUser.umkm_controller.umkm_published);
 
     app.route('/api/user/umkm/:id/:token')
-        .get(api_user.umkm_controller.umkmpublishedid);
-
-
+        .get(ControllerUser.umkm_controller.umkm_published_id);
 
 
     // Tentang Desa
     app.route('/api/user/informasidesa/:token')
-        .get(api_user.informasi_desa_controller.informasidesapublished);
+        .get(ControllerUser.informasi_desa_controller.informasi_desa_published);
 
     app.route('/api/user/pengurusdesa/:token')
-        .get(api_user.informasi_desa_controller.penguruspublished);
+        .get(ControllerUser.informasi_desa_controller.pengurus_published);
 
 
     app.route("/api/user/pengaduan/tambah")
-        .post(api_user.pengaduan_masyarakat_controller.createPengaduan);
+        .post(ControllerUser.pengaduan_masyarakat_controller.create_pengaduan);
 
     app.route("/api/user/update/profile/:token")
-        .put(api_user.auth_controller.mob_update_profile);
+        .put(ControllerUser.akun_controller.update_image_profile);
 
 
 
-
-
+    // UMKM Saya
     app.route('/api/user/umkm-saya/:token')
-        .get(api_user.umkm_controller.umkmSaya);
+        .get(ControllerUser.umkm_controller.umkm_saya);
 
     app.route('/api/user/umkm-saya/:id/:token')
-        .get(api_user.umkm_controller.umkmSayaid);
+        .get(ControllerUser.umkm_controller.umkm_saya_id);
     app.route('/api/user/umkm/update-status')
-        .put(api_user.umkm_controller.updateStatus);
+        .put(ControllerUser.umkm_controller.update_status);
 
 
     app
         .route("/api/user/check-password")
-        .post(api_user.auth_controller.mobaccountpassword);
+        .post(ControllerUser.akun_controller.check_password);
     app
         .route("/api/user/new_password")
-        .put(api_user.auth_controller.mobpasswordedit);
+        .put(ControllerUser.akun_controller.edit_password);
 
 
     // Pemilihan Ketua
     app.route('/api/pemilihan-ketua/:pemilihan_ketua_id/:token')
-        .get(api_user.pemilihan_controller.infoPemilihanDetail);
+        .get(ControllerUser.pemilihan_controller.info_pemilihan_detail);
 
     app.route('/api/calon-pemilihan-ketua/:pemilihan_ketua_id/:token')
-        .get(api_user.pemilihan_controller.infoCalonPemilihan);
+        .get(ControllerUser.pemilihan_controller.info_calon_pemilihan);
 
     app.route('/api/detail-calon-pemilihan-ketua/:calon_ketua_id/:token')
-        .get(api_user.pemilihan_controller.infoDetailCalonPemilihan);
+        .get(ControllerUser.pemilihan_controller.info_detail_calon_pemilihan);
 
     app.route('/api/cek-hak-pilih/:token')
-        .get(api_user.pemilihan_controller.cekHakPilih);
+        .get(ControllerUser.pemilihan_controller.cek_hak_pilih);
 
     app.route('/api/user/vote/')
-        .put(api_user.pemilihan_controller.updateVote);
-
-
-
-        
+        .put(ControllerUser.pemilihan_controller.update_vote);
 }

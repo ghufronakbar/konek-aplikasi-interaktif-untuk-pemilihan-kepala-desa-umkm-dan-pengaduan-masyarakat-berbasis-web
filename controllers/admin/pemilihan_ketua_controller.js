@@ -1,6 +1,7 @@
 'use strict';
 
 const connection = require('../../connection');
+const { error } = require('../../res');
 
 //JOIN PEMILIHAN KETUA
 exports.pemilihanketuadesa = function (req, res) {
@@ -434,4 +435,53 @@ exports.calonketuadelete = function (req, res) {
                 return res.status(200).json({ status: 200, message: `Berhasil menghapus calon ketua dari pemilihan ini` })
             };
         })
+}
+
+
+
+// SET HAK PILIH
+exports.set_hak_pilih = async (req, res) => {
+    const qValidationPemilihanKepala = `SELECT pemilihan_ketua_id 
+                                        FROM pemilihan_ketua 
+                                        WHERE tanggal_mulai <= CURDATE()
+                                        AND tanggal_selesai >= CURDATE()`;
+
+    connection.query(qValidationPemilihanKepala, (error, rows) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).json({ status: 500, message: "Internal Server Error" });
+        } else {
+            if (rows.length == 0) {
+                return res.status(400).json({ status: 400, message: "Tidak ada pemilihan sekarang" });
+            } else {
+                const qSelect = `SELECT warga_id 
+                                 FROM warga 
+                                 WHERE tanggal_lahir <= DATE_SUB(CURDATE(), INTERVAL 17 YEAR)`;
+
+                connection.query(qSelect, (error, rows) => {
+                    if (error) {
+                        console.log(error);
+                        return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                    } else {
+                        if (rows.length == 0) {
+                            return res.status(200).json({ status: 200, message: "Tidak ada warga yang memenuhi syarat usia" });
+                        }
+
+                        const wargaIds = rows.map(row => row.warga_id);
+                        const placeholders = wargaIds.map(() => '?').join(',');
+                        const qUpdateHakPilih = `UPDATE warga SET hak_pilih = 1 WHERE warga_id IN (${placeholders})`;
+
+                        connection.query(qUpdateHakPilih, wargaIds, (error, result) => {
+                            if (error) {
+                                console.log(error);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                            } else {
+                                return res.status(200).json({ status: 200, message: "Berhasil menambahkan hak pilih ke warga dengan usia legal" });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
 }
