@@ -1,8 +1,7 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
+const connection = require('../../connection');
+const md5 = require('md5');
 
 
 //GET ID WARGA 
@@ -174,15 +173,28 @@ exports.wargaput = async (req, res) => {
 
 //DEconstE WARGA
 exports.wargadelete = async (req, res) => {
-    const id = req.params.id;
-    connection.query('DELETE FROM warga WHERE warga_id=?',
-        [id],
+    const {warga_id} = req.params;
+    connection.query(`SELECT warga_id FROM warga WHERE warga_id=?`, warga_id,
         async (error, rows, fields) => {
             if (error) {
                 console.log(error);
                 return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
-                return res.status(200).json({ status: 200, message: `Berhasil menghapus data warga` })
+                if(rows.length==0){
+                return res.status(400).json({ status: 400, message: "Tidak ada warga yang terhapus" });
+                }else{
+                    connection.query('DELETE FROM warga WHERE warga_id=?',
+                        [warga_id],
+                        async (error, rows, fields) => {
+                            if (error) {
+                                console.log(error);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                            } else {
+                                return res.status(200).json({ status: 200, message: `Berhasil menghapus data warga` })
+                            };
+                        })
+                }
             };
-        })
+        }
+    )
 }
