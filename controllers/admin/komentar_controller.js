@@ -1,9 +1,6 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
-
+const connection = require('../../connection');
 
 //GET KOMENTAR
 exports.komentar = function (req, res) {
@@ -11,7 +8,7 @@ exports.komentar = function (req, res) {
         if (error) {
             connection.log(error);
         } else {
-            response.ok(rows, res)
+            return res.status(200).json({ status: 200, values: rows })
         };
     }
     )
@@ -26,7 +23,7 @@ exports.komentardelete = function (req, res) {
             if (error) {
                 console.log(error);
             } else {
-                response.ok("Berhasil Menghapus Komentar!", res)
+                return res.status(200).json({ status: 200, message: "Komentar berhasil dihapus" })
             };
         })
 }

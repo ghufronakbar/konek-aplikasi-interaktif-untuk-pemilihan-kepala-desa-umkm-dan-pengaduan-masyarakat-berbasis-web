@@ -17,80 +17,80 @@ module.exports = function (app) {
         .get(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritaid)
 
     app.route('/api/admin/berita/add')
-        .post(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritapost); //v
+        .post(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritapost); 
 
     app.route('/api/admin/berita/edit/:berita_id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritaput); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritaput); 
 
     app.route('/api/admin/berita/delete/:berita_id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritadelete); //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritadelete); 
 
     app.route('/api/admin/berita/publikasi/:berita_id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritapublikasi); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritapublikasi); 
 
     app.route('/api/admin/berita/prioritas/:berita_id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritaprioritas); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.berita_controller.beritaprioritas); 
 
 
     //INFORMASI DESA
     app.route('/api/admin/informasidesa')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.informasi_desa_controller.informasidesa); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.informasi_desa_controller.informasidesa); 
 
     app.route('/api/admin/informasidesa/edit')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.informasi_desa_controller.informasidesaput); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.informasi_desa_controller.informasidesaput); 
 
 
     //KOMENTAR
     app.route('/api/admin/komentar')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.komentar_controller.komentar); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.komentar_controller.komentar); 
 
     app.route('/api/admin/komentar/delete/:id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.komentar_controller.komentardelete); //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.komentar_controller.komentardelete); 
 
 
     // //PENGADUAN MASYARAKAT
     app.route('/api/admin/pengaduanmasyarakat')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatjoin); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatjoin); 
 
     app.route('/api/admin/pengaduanmasyarakat/:id')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatjoinid); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatjoinid); 
 
     app.route('/api/admin/pengaduanmasyarakat/delete/:id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatdelete); //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatdelete); 
 
 
     // //PENGURUS DESA
     app.route('/api/admin/pengurusdesa')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.detailpengurus); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.detailpengurus); 
 
     app.route('/api/admin/pengurusdesa/:id')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.detailpengurusid); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.detailpengurusid); 
 
     app.route('/api/admin/pengurusdesa/add')
         .post(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotapost);
 
     app.route('/api/admin/pengurusdesa/edit/:id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotaput); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotaput); 
 
     app.route('/api/admin/pengurusdesa/delete/:id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotadelete); //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotadelete); 
 
     app.route('/api/admin/pengurusdesa/akses/:id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotaakses); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotaakses); 
 
 
     // //UMKM
     app.route('/api/admin/umkm')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmjoin); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmjoin); 
 
     app.route('/api/admin/umkm/:umkm_id')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmjoinid);
 
     app.route('/api/admin/umkm/delete/:umkm_id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmdelete); //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmdelete); 
 
     app.route('/api/admin/umkm/approve/:umkm_id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmputapprove); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmputapprove); 
 
 
     // //JENIS UMKM
@@ -98,34 +98,34 @@ module.exports = function (app) {
         .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkm);  
 
     app.route('/api/admin/jenisumkm/add')
-        .post(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmpost); //v
+        .post(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmpost); 
 
     app.route('/api/admin/jenisumkm/edit/:jenis_umkm_id')
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmput); //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmput); 
 
     app.route('/api/admin/jenisumkm/delete/:jenis_umkm_id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmdelete); //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmdelete); 
 
     app.route('/api/admin/jenisumkm/:jenis_umkm_id')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmid); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkmid); 
 
 
 
     // //WARGA
     app.route('/api/admin/warga')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.warga); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.warga); 
 
     app.route('/api/admin/warga/:warga_id')
-        .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargaid); //v
+        .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargaid); 
 
     app.route('/api/admin/warga/add')
-        .post(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargapost); //v
+        .post(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargapost); 
 
     app.route('/api/admin/warga/edit/:warga_id') //
-        .put(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargaput) //v
+        .put(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargaput) 
 
     app.route('/api/admin/warga/delete/:warga_id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargadelete) //v
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargadelete) 
 
 
 
@@ -137,7 +137,7 @@ module.exports = function (app) {
         .get(VerificationPengurusDesa, ControllerPengurusDesa.pemilihan_ketua_controller.pemilihanketuadesaid);
 
     app.route('/api/admin/pemilihankepaladesa/add')
-        .post(VerificationPengurusDesa, ControllerPengurusDesa.pemilihan_ketua_controller.pemilihanketuapost); //v
+        .post(VerificationPengurusDesa, ControllerPengurusDesa.pemilihan_ketua_controller.pemilihanketuapost); 
 
     app.route('/api/admin/pemilihankepaladesa/edit/:id')
         .put(VerificationPengurusDesa, ControllerPengurusDesa.pemilihan_ketua_controller.pemilihanketuaput); //
