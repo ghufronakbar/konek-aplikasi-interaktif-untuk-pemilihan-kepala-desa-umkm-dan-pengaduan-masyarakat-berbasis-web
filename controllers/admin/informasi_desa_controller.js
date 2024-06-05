@@ -1,7 +1,6 @@
 'use strict';
 
-
-var connection = require('../../connection');
+const connection = require('../../connection');
 
 //GET INFORMASI DESA
 exports.informasidesa = function (req, res) {

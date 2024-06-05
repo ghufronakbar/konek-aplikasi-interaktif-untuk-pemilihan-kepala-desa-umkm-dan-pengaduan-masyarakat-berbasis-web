@@ -1,8 +1,6 @@
 'use strict';
 
-var connection = require('../../connection');
-var md5 = require('md5');
-
+const connection = require('../../connection');
 
 //JOIN PEMILIHAN KETUA
 exports.pemilihanketuadesa = function (req, res) {
@@ -62,7 +60,7 @@ exports.pemilihanketuadesa = function (req, res) {
                                     namalengkap: ckRow.namalengkap,
                                     nik: ckRow.nik,
                                     tanggal_lahir: ckRow.tanggal_lahir,
-                                    foto: ckRow.foto ? process.env.BASE_URL + `/warga/` + ckRow.foto : process.env.BASE_URL + `/warga/default.png`,
+                                    foto: ckRow.foto ? process.env.BASE_URL + `/warga/` + ckRow.foto : process.env.BASE_URL + `/default/profile.png`,
                                     deskripsi_calon: ckRow.deskripsi_calon,
                                     total_pemilih: ckRow.total_pemilih
                                 });
@@ -140,7 +138,7 @@ exports.pemilihanketuadesaid = function (req, res) {
                                     namalengkap: ckRow.namalengkap,
                                     nik: ckRow.nik,
                                     tanggal_lahir: ckRow.tanggal_lahir,
-                                    foto: ckRow.foto ? process.env.BASE_URL + `/warga/` + ckRow.foto : process.env.BASE_URL + `/warga/default.png`,
+                                    foto: ckRow.foto ? process.env.BASE_URL + `/warga/` + ckRow.foto : process.env.BASE_URL + `/default/profile.png`,
                                     deskripsi_calon: ckRow.deskripsi_calon,
                                     total_pemilih: ckRow.total_pemilih
                                 });
@@ -321,7 +319,7 @@ exports.calonketua = function (req, res) {
                     namalengkap: row.namalengkap,
                     nik: row.nik,
                     tanggal_lahir: row.tanggal_lahir,
-                    foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/warga/default.png`,
+                    foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
                     deskripsi_calon: row.deskripsi_calon,
                     total_pemilih: row.total_pemilih
                 });
@@ -352,7 +350,7 @@ exports.calonketuaid = function (req, res) {
                     namalengkap: row.namalengkap,
                     nik: row.nik,
                     tanggal_lahir: row.tanggal_lahir,
-                    foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/warga/default.png`,
+                    foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
                     deskripsi_calon: row.deskripsi_calon,
                     total_pemilih: row.total_pemilih
                 });

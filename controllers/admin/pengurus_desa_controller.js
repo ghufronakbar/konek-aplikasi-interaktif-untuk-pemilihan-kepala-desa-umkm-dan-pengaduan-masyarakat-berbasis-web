@@ -10,29 +10,29 @@ exports.detailpengurus = async (req, res) => {
                         pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin 
                         FROM pengurus_desa_anggota JOIN warga 
                         WHERE pengurus_desa_anggota.warga_id = warga.warga_id 
-                        ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;`, 
-    (error, rows, fields) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({ status: 500, message: "Internal Server Error" });
-        } else {
-            // Membentuk array response baru menggunakan forEach
-            let response = [];
-            rows.forEach(row => {
-                response.push({
-                    pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
-                    warga_id: row.warga_id,
-                    nik: row.nik,
-                    nama_lengkap: row.nama_lengkap,
-                    tanggal_lahir: row.tanggal_lahir,
-                    foto: row.foto? process.env.BASE_URL+`/warga/`+row.foto:process.env.BASE_URL+`/warga/default.png`,
-                    jabatan: row.jabatan,
-                    akses_admin: row.akses_admin
+                        ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;`,
+        (error, rows, fields) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
+            } else {
+                // Membentuk array response baru menggunakan forEach
+                let response = [];
+                rows.forEach(row => {
+                    response.push({
+                        pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
+                        warga_id: row.warga_id,
+                        nik: row.nik,
+                        nama_lengkap: row.nama_lengkap,
+                        tanggal_lahir: row.tanggal_lahir,
+                        foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
+                        jabatan: row.jabatan,
+                        akses_admin: row.akses_admin
+                    });
                 });
-            });
-            return res.status(200).json({ status: 200, values: response });
-        };
-    });
+                return res.status(200).json({ status: 200, values: response });
+            };
+        });
 };
 
 exports.detailpengurusid = async (req, res) => {
@@ -43,28 +43,28 @@ exports.detailpengurusid = async (req, res) => {
                         FROM pengurus_desa_anggota JOIN warga 
                         WHERE pengurus_desa_anggota.warga_id = warga.warga_id 
                         AND pengurus_desa_anggota.pengurus_desa_anggota_id=?`, id,
-    (error, rows, fields) => {
-        if (error) {
-            console.log(error);
-            return res.status(500).json({ status: 500, message: "Internal Server Error" });
-        } else {
-            // Membentuk array response baru menggunakan forEach
-            let response = [];
-            rows.forEach(row => {
-                response.push({
-                    pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
-                    warga_id: row.warga_id,
-                    nik: row.nik,
-                    nama_lengkap: row.nama_lengkap,
-                    tanggal_lahir: row.tanggal_lahir,
-                    foto: row.foto? process.env.BASE_URL+`/warga/`+row.foto:process.env.BASE_URL+`/warga/default.png`,
-                    jabatan: row.jabatan,
-                    akses_admin: row.akses_admin
+        (error, rows, fields) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
+            } else {
+                // Membentuk array response baru menggunakan forEach
+                let response = [];
+                rows.forEach(row => {
+                    response.push({
+                        pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
+                        warga_id: row.warga_id,
+                        nik: row.nik,
+                        nama_lengkap: row.nama_lengkap,
+                        tanggal_lahir: row.tanggal_lahir,
+                        foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
+                        jabatan: row.jabatan,
+                        akses_admin: row.akses_admin
+                    });
                 });
-            });
-            return res.status(200).json({ status: 200, values: response });
-        };
-    });
+                return res.status(200).json({ status: 200, values: response });
+            };
+        });
 };
 
 
@@ -73,8 +73,11 @@ exports.pengurusdesaanggotapost = async (req, res) => {
     const warga_id = req.body.warga_id;
     const jabatan = req.body.jabatan;
 
-    if (!warga_id || !jabatan) {
-        return res.status(400).json({ status: 200, message: "Field tidak boleh kosong" })
+    if(!warga_id ){
+        return res.status(400).json({ status: 400, message: "Pilih warga terlebih dahulu" })
+    }
+    if (!jabatan) {
+        return res.status(400).json({ status: 400, message: "Field tidak boleh kosong" })
     }
     const qValidation = `SELECT pengurus_desa_anggota_id FROM pengurus_desa_anggota WHERE warga_id=?`
     connection.query(qValidation, warga_id,
@@ -127,16 +130,55 @@ exports.pengurusdesaanggotaput = async (req, res) => {
 //DEconstE PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotadelete = async (req, res) => {
     const id = req.params.id;
-    connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
-        [id],
+
+    const qValidationPengurusDesa = `SELECT pengurus_desa_anggota_id,akses_admin FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?`
+    connection.query(qValidationPengurusDesa, id,
         (error, rows, fields) => {
             if (error) {
                 console.log(error);
-                return res.status(500).json({ status: 500, message: "Internal Server Error" })
+                return res.status(500).json({ status: 500, message: "Internal Server Error" });
             } else {
-                return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" })
-            };
-        })
+                const { akses_admin } = rows[0]
+                if (akses_admin == 0) {
+                    connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
+                        [id],
+                        (error, rows, fields) => {
+                            if (error) {
+                                console.log(error);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" })
+                            } else {
+                                return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" })
+                            };
+                        })
+                }else{
+                    const qValidationAksesAdmin = `SELECT pengurus_desa_anggota_id FROM pengurus_desa_anggota WHERE akses_admin=1`
+                    connection.query(qValidationAksesAdmin,
+                        (error, rows, fields) => {
+                            if (error) {
+                                console.log(error);
+                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                            } else {
+                                if (rows.length <= 1) {
+                                    return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
+                                } else {
+                                    connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
+                                    [id],
+                                    (error, rows, fields) => {
+                                        if (error) {
+                                            console.log(error);
+                                            return res.status(500).json({ status: 500, message: "Internal Server Error" })
+                                        } else {
+                                            return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" })
+                                        };
+                                    })
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    )
 }
 
 //SET AKSES PENGURUS DESA ANGGOTA
@@ -145,17 +187,32 @@ exports.pengurusdesaanggotaakses = async (req, res) => {
     const akses_admin = req.body.akses_admin;
 
     if (akses_admin == 0) {
-        connection.query('UPDATE pengurus_desa_anggota SET akses_admin=0 WHERE pengurus_desa_anggota_id=?',
-            [id],
+        const qValidation = `SELECT pengurus_desa_anggota_id FROM pengurus_desa_anggota WHERE akses_admin=1`
+        connection.query(qValidation,
             (error, rows, fields) => {
                 if (error) {
                     console.log(error);
                     return res.status(500).json({ status: 500, message: "Internal Server Error" });
                 } else {
-                    console.log(error)
-                    return res.status(200).json({ status: 200, message: "Berhasil mencabut akses admin" })
-                };
-            })
+                    if (rows.length <= 1) {
+                        return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
+                    } else {
+                        connection.query('UPDATE pengurus_desa_anggota SET akses_admin=0 WHERE pengurus_desa_anggota_id=?',
+                            [id],
+                            (error, rows, fields) => {
+                                if (error) {
+                                    console.log(error);
+                                    return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                                } else {
+                                    console.log(error)
+                                    return res.status(200).json({ status: 200, message: "Berhasil mencabut akses admin" })
+                                };
+                            })
+                    }
+                }
+            }
+        )
+
     } else if (akses_admin == 1) {
         connection.query('UPDATE pengurus_desa_anggota SET akses_admin=1 WHERE pengurus_desa_anggota_id=?',
             [id],

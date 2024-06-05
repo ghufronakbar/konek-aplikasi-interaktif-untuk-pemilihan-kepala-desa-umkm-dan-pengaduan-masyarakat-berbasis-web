@@ -33,7 +33,7 @@ exports.warga = async (req, res) => {
                             kk: row.kk,
                             nama_lengkap: row.nama_lengkap,
                             tanggal_lahir: row.tanggal_lahir,
-                            foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/warga/default.png`,
+                            foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
                             hak_pilih: row.hak_pilih,
                             umkm: [{
                                 umkm_id: row.umkm_id,
@@ -85,7 +85,7 @@ exports.wargaid = async (req, res) => {
                             kk: row.kk,
                             nama_lengkap: row.nama_lengkap,
                             tanggal_lahir: row.tanggal_lahir,
-                            foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/warga/default.png`,
+                            foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
                             hak_pilih: row.hak_pilih,
                             umkm: [{
                                 umkm_id: row.umkm_id,
@@ -111,21 +111,22 @@ exports.wargapost = async (req, res) => {
     const { nik, kk, nama_lengkap, tanggal_lahir } = req.body;
     const password = md5(req.body.kk);
 
-    // Cek apakah NIK sudah ada
+    if(!nik|| !kk|| !nama_lengkap|| !tanggal_lahir){
+        return res.status(400).json({ status: 400, message: "Lengkapi form untuk menambah warga" });
+    }
+
     connection.query('SELECT * FROM warga WHERE nik = ?', [nik], (error, results) => {
         if (error) {
             console.log(error);
             return res.status(500).json({ status: 500, message: "Internal Server Error" });
         }
 
-        if (results.length > 0) {
-            // Jika NIK sudah ada, kirimkan pesan kesalahan
+        if (results.length > 0) {            
             return res.status(400).json({ status: 400, message: "NIK sudah terdaftar!" });
         }
 
-        // Jika NIK belum ada, lanjutkan untuk memasukkan data baru
         connection.query('INSERT INTO warga(nik, kk, nama_lengkap, tanggal_lahir, hak_pilih, password) VALUES (?,?,?,?,?,?)',
-            [nik, kk, nama_lengkap, tanggal_lahir, "0", password],
+            [nik, kk, nama_lengkap, tanggal_lahir, 0, password],
             (error, rows, fields) => {
                 if (error) {
                     console.log(error);
@@ -183,16 +184,31 @@ exports.wargadelete = async (req, res) => {
                 if(rows.length==0){
                 return res.status(400).json({ status: 400, message: "Tidak ada warga yang terhapus" });
                 }else{
-                    connection.query('DELETE FROM warga WHERE warga_id=?',
-                        [warga_id],
-                        async (error, rows, fields) => {
+
+                    const qValidationPengurusDesa = `SELECT warga_id FROM pengurus_desa_anggota WHERE warga_id=?`
+                    connection.query(qValidationPengurusDesa,warga_id,
+                         (error, rows, fields) => {
                             if (error) {
                                 console.log(error);
                                 return res.status(500).json({ status: 500, message: "Internal Server Error" });
                             } else {
-                                return res.status(200).json({ status: 200, message: `Berhasil menghapus data warga` })
-                            };
-                        })
+                                if (rows.length>0){
+                                    return res.status(400).json({ status: 400, message: "Tidak dapat menghapus Pengurus Desa" });
+                                }else{
+                                    connection.query('DELETE FROM warga WHERE warga_id=?',
+                                    [warga_id],
+                                    async (error, rows, fields) => {
+                                        if (error) {
+                                            console.log(error);
+                                            return res.status(500).json({ status: 500, message: "Internal Server Error" });
+                                        } else {
+                                            return res.status(200).json({ status: 200, message: `Berhasil menghapus data warga` })
+                                        };
+                                    })
+                                }
+                            }
+                        }
+                    )                   
                 }
             };
         }

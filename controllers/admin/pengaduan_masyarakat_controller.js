@@ -10,7 +10,7 @@ exports.pengaduanmasyarakatjoin = function (req, res) {
         if (error) {
             console.log(error);
         } else {
-            response.ok(rows, res)
+            return res.status(200).json({status:200,values:rows})            
         };
     }
     )
@@ -23,7 +23,7 @@ exports.pengaduanmasyarakatjoinid = function (req, res) {
         if (error) {
             console.log(error);
         } else {
-            response.ok(rows, res)
+            return res.status(200).json({status:200,values:rows})            
         };
     }
     )
@@ -38,7 +38,7 @@ exports.pengaduanmasyarakatdelete = function (req, res) {
             if (error) {
                 console.log(error);
             } else {
-                response.ok("Berhasil Menghapus Data Pengaduan Masyarakat!", res)
+                return res.status(200).json({status:200,values:rows})            
             };
         })
 }

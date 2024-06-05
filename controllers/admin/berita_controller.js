@@ -36,7 +36,7 @@ exports.berita = async (req, res) => {
                     subjudul: row.subjudul,
                     tanggal: row.tanggal,
                     isi: row.isi,
-                    gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/berita/default.jpg`,
+                    gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/default/berita.jpg`,
                     publikasi: row.publikasi,
                     prioritas: row.prioritas
                 });
@@ -62,7 +62,7 @@ exports.beritaid = async (req, res) => {
                     subjudul: row.subjudul,
                     tanggal: row.tanggal,
                     isi: row.isi,
-                    gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/berita/default.jpg`,
+                    gambar: row.gambar ? process.env.BASE_URL + `/berita/` + row.gambar : process.env.BASE_URL + `/default/berita.jpg`,
                     publikasi: row.publikasi,
                     prioritas: row.prioritas
                 });

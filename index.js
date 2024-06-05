@@ -20,6 +20,7 @@ const routesWeb = require('./routes/web');
 app.use("/umkm/", express.static("upload/umkm"));
 app.use("/warga/", express.static("upload/warga"));
 app.use("/berita/", express.static("upload/berita"));
+app.use("/default/", express.static("upload/default"));
 routesAdmin(app);
 routesUser(app);
 routesWeb(app);
