@@ -28,6 +28,7 @@ routesWeb(app);
 //menu routes index
 app.use('/auth', require('./middleware'));
 
-app.listen(5000, () => {
-    console.log(`Server started on port`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server started on port ${process.env.PORT}`);
+    console.log(process.env.BASE_URL)
 });
