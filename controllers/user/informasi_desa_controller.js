@@ -1,16 +1,11 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
-const verifikasi = require('../../middleware/verifikasi-user');
-
+const response = require('../../res');
+const connection = require('../../connection');
 
 //GET INFORMASI DESA
 exports.informasi_desa_published = function (req, res) {
-    let token = req.params.token;
-    verifikasi(token)(req, res, function () {
-        var warga_id = req.decoded.warga_id
+        const warga_id = req.decoded.warga_id
         connection.query(`SELECT * FROM informasi_desa 
                         WHERE informasi_desa_id=(SELECT MAX(informasi_desa_id)
                         FROM informasi_desa)`, function (error, rows, fields) {
@@ -21,13 +16,10 @@ exports.informasi_desa_published = function (req, res) {
             };
         }
         )
-    })
 };
 
 //PENGURUS DESA
 exports.pengurus_published = function (req, res) {
-    let token = req.params.token;
-    verifikasi(token)(req, res, function () {
         connection.query(`SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, 
                     warga.nama_lengkap, warga.foto, pengurus_desa_anggota.jabatan 
                     FROM pengurus_desa_anggota JOIN warga WHERE 
@@ -49,5 +41,4 @@ exports.pengurus_published = function (req, res) {
             };
         }
         )
-    })
 };

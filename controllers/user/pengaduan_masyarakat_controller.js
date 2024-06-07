@@ -1,16 +1,10 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
-const verifikasi = require('../../middleware/verifikasi-user');
-const url = require("url");
-const fs = require("fs");
-
-const path = require("path");
+const response = require('../../res');
+const connection = require('../../connection');
 
 exports.create_pengaduan = function (req, res) {
-    const { subjek, isi, token } = req.body;
+    const { subjek, isi } = req.body;
     let now = new Date();
     let date_now =
         now.getFullYear() +
@@ -25,8 +19,7 @@ exports.create_pengaduan = function (req, res) {
         ":" +
         ("0" + now.getSeconds()).slice(-2);
 
-    verifikasi(token)(req, res, function () {
-        var warga_id = req.decoded.warga_id;
+        const warga_id = req.decoded.warga_id;
         const query = 'INSERT INTO `pengaduan_masyarakat`(`warga_id`, `subjek`, `isi`, `tanggal`) VALUES (?, ?, ?, ?)';
         const values = [warga_id, subjek, isi, date_now];
 
@@ -38,5 +31,4 @@ exports.create_pengaduan = function (req, res) {
                 response.ok(rows, res)
             };
         });
-    })
 };

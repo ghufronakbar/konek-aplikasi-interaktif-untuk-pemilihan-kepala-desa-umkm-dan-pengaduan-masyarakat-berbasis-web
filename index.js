@@ -14,7 +14,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 //routes
-const routesAdmin = require('./routes/pengurus-desa');
+const routesAdmin = require('./routes/admin');
 const routesUser = require('./routes/user');
 const routesWeb = require('./routes/web');
 app.use("/umkm/", express.static("upload/umkm"));

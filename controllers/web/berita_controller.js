@@ -100,7 +100,6 @@ exports.showBerita = async (req, res) => {
               warga_id: komentar.warga_id || 0,
               namalengkap: komentar.nama_lengkap || "",
               foto: komentar.foto ? process.env.BASE_URL + `/profile/` + komentar.foto : process.env.BASE_URL + `/profile/default.png`,
-
             });
           }
         }

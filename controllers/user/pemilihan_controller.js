@@ -1,16 +1,9 @@
 'use strict';
 
-var response = require('../../res');
-var connection = require('../../connection');
-var md5 = require('md5');
-const verifikasi = require('../../middleware/verifikasi-user');
-
-
+const connection = require('../../connection');
 
 //GET INFORMASI DESA
-exports.info_pemilihan = function (req, res) {
-    let token = req.params.token;
-    verifikasi(token)(req, res, function () {
+exports.info_pemilihan = function (req, res) {    
         connection.query('SELECT pemilihan_ketua_id, tanggal_mulai, tanggal_selesai FROM pemilihan_ketua', function (error, rows, fields) {
             if (error) {
                 console.log(error);
@@ -34,14 +27,11 @@ exports.info_pemilihan = function (req, res) {
                 }
                 res.json({ status: 200, values: { ada_pemilihan: pemilihan, pemilihan_ketua_id: pemilihan_ketua_id } });
             }
-        });
-    });
+        });    
 };
 
 exports.info_pemilihan_detail = function (req, res) {
-    let token = req.params.token;
     const pemilihan_ketua_id = req.params.pemilihan_ketua_id;
-    verifikasi(token)(req, res, function () {
         connection.query(
             'SELECT p.pemilihan_ketua_id, p.tanggal_mulai, p.tanggal_selesai, p.judul, p.deskripsi, COUNT(c.calon_ketua_id) AS jumlah_calon ' +
             'FROM pemilihan_ketua p ' +
@@ -62,14 +52,11 @@ exports.info_pemilihan_detail = function (req, res) {
                 }
             }
         );
-    })
 }
 
 
 exports.info_calon_pemilihan = function (req, res) {
-    let token = req.params.token;
     const pemilihan_ketua_id = req.params.pemilihan_ketua_id;
-    verifikasi(token)(req, res, function () {
         connection.query(
             'SELECT c.calon_ketua_id, c.pemilihan_ketua_id, c.warga_id, w.nama_lengkap, w.tanggal_lahir, w.foto ' +
             'FROM calon_ketua c ' +
@@ -99,13 +86,10 @@ exports.info_calon_pemilihan = function (req, res) {
                 }
             }
         );
-    })
 }
 
 exports.info_detail_calon_pemilihan = function (req, res) {
-    let token = req.params.token;
     const calon_ketua_id = req.params.calon_ketua_id;
-    verifikasi(token)(req, res, function () {
         connection.query(
             'SELECT c.calon_ketua_id, c.pemilihan_ketua_id, c.warga_id, w.nama_lengkap, w.tanggal_lahir, w.foto, c.deskripsi, c.total_pemilih ' +
             'FROM calon_ketua c ' +
@@ -125,12 +109,9 @@ exports.info_detail_calon_pemilihan = function (req, res) {
                 }
             }
         );
-    })
 }
 exports.cek_hak_pilih = function (req, res) {
-    let token = req.params.token;
-    verifikasi(token)(req, res, function () {
-        var warga_id = req.decoded.warga_id;
+        const warga_id = req.decoded.warga_id;
         connection.query(
             'SELECT hak_pilih FROM warga WHERE warga_id = ?', [warga_id],
             function (error, rows, fields) {
@@ -146,15 +127,11 @@ exports.cek_hak_pilih = function (req, res) {
                 }
             }
         );
-    })
 }
 
 exports.update_vote = function (req, res) {
-    let token = req.body.token;
     let calon_ketua_id  = req.body.calon_ketua_id ;
-
-    verifikasi(token)(req, res, function () {
-        var warga_id = req.decoded.warga_id;
+        const warga_id = req.decoded.warga_id;
         connection.query(
             'UPDATE warga SET hak_pilih = 0 WHERE warga_id = ?', [warga_id],
             function (error, result) {
@@ -185,7 +162,6 @@ exports.update_vote = function (req, res) {
                 }
             }
         );
-    })
 }
 
 
