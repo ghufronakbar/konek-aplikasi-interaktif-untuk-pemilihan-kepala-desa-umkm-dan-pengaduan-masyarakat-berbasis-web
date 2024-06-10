@@ -3,18 +3,20 @@
 const ControllerUser = require('../controllers/user');
 const VerificationUser = require('../middleware/verifikasi-warga')
 
-module.exports = function (app) {
+module.exports = (app) => {
 
-
+    // endpoint method web services req res page
     // API MOBILE PHONE
     // Login
     app.route('/api/user/login')
         .post(ControllerUser.akun_controller.login);
+
+
     app.route('/api/user/check')
         .get(VerificationUser, ControllerUser.akun_controller.check_user);
 
-    // Home
-    // fetch berita prioritas
+
+    // Home Page    
     app.route('/api/user/berita-prioritas')
         .get(VerificationUser, ControllerUser.berita_controller.berita_prioritas);
 
@@ -27,14 +29,25 @@ module.exports = function (app) {
     app.route('/api/user/home/pemilihan')
         .get(VerificationUser, ControllerUser.pemilihan_controller.info_pemilihan);
 
-    // Akun
+
+
+
+    // Akun    
     app.route('/api/user')
         .get(VerificationUser, ControllerUser.akun_controller.info_user_login);
 
     app.route("/api/user/update/profile")
         .put(VerificationUser, ControllerUser.akun_controller.update_image_profile);
 
-    // Berita
+    app.route("/api/user/check-password")
+        .post(VerificationUser, ControllerUser.akun_controller.check_password);
+        
+    app.route("/api/user/new_password")
+        .put(VerificationUser, ControllerUser.akun_controller.edit_password);
+
+
+    // Berita    
+
     app.route('/api/user/berita')
         .get(VerificationUser, ControllerUser.berita_controller.berita_published);
 
@@ -45,7 +58,7 @@ module.exports = function (app) {
         .post(VerificationUser, ControllerUser.berita_controller.komentar_berita);
 
 
-    // UMKM
+    // UMKM    
     app.route('/api/user/jenis-umkm')
         .get(VerificationUser, ControllerUser.umkm_controller.get_jenis_umkm);
 
@@ -64,7 +77,7 @@ module.exports = function (app) {
 
 
 
-    // Tentang Desa
+    // Tentang Desa    
     app.route('/api/user/informasidesa')
         .get(VerificationUser, ControllerUser.informasi_desa_controller.informasi_desa_published);
 
@@ -72,43 +85,51 @@ module.exports = function (app) {
         .get(VerificationUser, ControllerUser.informasi_desa_controller.pengurus_published);
 
 
-    // Pengaduan Masyrakat
+    // Pengaduan Masyrakat    
     app.route("/api/user/pengaduan/tambah")
         .post(VerificationUser, ControllerUser.pengaduan_masyarakat_controller.create_pengaduan);
 
 
 
-    // UMKM Saya
+    // UMKM Saya    
+
+    
     app.route('/api/user/umkm-saya')
         .get(VerificationUser, ControllerUser.umkm_controller.umkm_saya);
 
     app.route('/api/user/umkm-saya/:id')
         .get(VerificationUser, ControllerUser.umkm_controller.umkm_saya_id);
+
     app.route('/api/user/umkm/update-status')
         .put(VerificationUser, ControllerUser.umkm_controller.update_status);
 
 
-    app
-        .route("/api/user/check-password")
-        .post(VerificationUser, ControllerUser.akun_controller.check_password);
-    app
-        .route("/api/user/new_password")
-        .put(VerificationUser, ControllerUser.akun_controller.edit_password);
-
 
     // Pemilihan Ketua
+
+
     app.route('/api/user/pemilihan-ketua/:pemilihan_ketua_id')
-        .get(VerificationUser, ControllerUser.pemilihan_controller.info_pemilihan_detail);///////
+        .get(VerificationUser, ControllerUser.pemilihan_controller.info_pemilihan_detail);
+
+
+
 
     app.route('/api/user/calon-pemilihan-ketua/:pemilihan_ketua_id')
-        .get(VerificationUser, ControllerUser.pemilihan_controller.info_calon_pemilihan);///////
+        .get(VerificationUser, ControllerUser.pemilihan_controller.info_calon_pemilihan);
+
+
+
 
     app.route('/api/user/detail-calon-pemilihan-ketua/:calon_ketua_id')
-        .get(VerificationUser, ControllerUser.pemilihan_controller.info_detail_calon_pemilihan);//////
+        .get(VerificationUser, ControllerUser.pemilihan_controller.info_detail_calon_pemilihan);
 
-    app.route('/api/user/cek-hak-pilih') //////
+    app.route('/api/user/cek-hak-pilih')
         .get(VerificationUser, ControllerUser.pemilihan_controller.cek_hak_pilih);
 
     app.route('/api/user/vote/')
         .put(VerificationUser, ControllerUser.pemilihan_controller.update_vote);
+
+
+
+
 }

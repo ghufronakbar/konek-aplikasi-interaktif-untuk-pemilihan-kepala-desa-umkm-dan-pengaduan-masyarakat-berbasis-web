@@ -115,17 +115,20 @@ module.exports = function (app) {
     app.route('/api/admin/warga')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.warga);
 
+    app.route('/api/admin/warga/delete/:warga_id')
+        .delete(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargadelete)
+
     app.route('/api/admin/warga/:warga_id')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargaid);
-
-    app.route('/api/admin/warga/add')
-        .post(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargapost);
 
     app.route('/api/admin/warga/edit/:warga_id') //
         .put(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargaput)
 
-    app.route('/api/admin/warga/delete/:warga_id')
-        .delete(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargadelete)
+    app.route('/api/admin/warga/add')
+        .post(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargapost);
+
+
+
 
 
 
