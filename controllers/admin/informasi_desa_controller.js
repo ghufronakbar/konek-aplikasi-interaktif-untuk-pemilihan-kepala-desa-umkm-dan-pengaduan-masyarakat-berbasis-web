@@ -15,7 +15,7 @@ exports.informasidesa = async (req, res) => {
             return res.status(404).json({ status: 404, message: "Informasi desa tidak ditemukan" });
         }
 
-        return res.status(200).json({ status: 200, values: informasiDesa });
+        return res.status(200).json({ status: 200, values: [informasiDesa] });
 
     } catch (error) {
         console.log(error);

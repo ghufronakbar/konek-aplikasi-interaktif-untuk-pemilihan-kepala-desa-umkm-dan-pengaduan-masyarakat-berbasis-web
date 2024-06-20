@@ -119,7 +119,7 @@ exports.wargapost = async (req, res) => {
     }
 
     try {
-        const existingWarga = await prisma.warga.findUnique({
+        const existingWarga = await prisma.warga.findFirst({
             where: {
                 nik: nik
             }

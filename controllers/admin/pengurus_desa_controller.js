@@ -174,7 +174,7 @@ exports.pengurusdesaanggotadelete = async (req, res) => {
 
         const { akses_admin } = pengurus;
 
-        if (akses_admin === 0) {
+        if (parseInt(akses_admin) === 0) {
             await prisma.pengurus_desa_anggota.delete({
                 where: {
                     pengurus_desa_anggota_id: id,
@@ -184,10 +184,7 @@ exports.pengurusdesaanggotadelete = async (req, res) => {
         } else {
             const countAdminPengurus = await prisma.pengurus_desa_anggota.count({
                 where: {
-                    akses_admin: true,
-                    NOT: {
-                        pengurus_desa_anggota_id: id,
-                    },
+                    akses_admin: 1,                   
                 },
             });
 
@@ -215,15 +212,13 @@ exports.pengurusdesaanggotaakses = async (req, res) => {
     const { akses_admin } = req.body;
 
     try {
-        if (akses_admin === 0) {
+        if (parseInt(akses_admin) === 0) {
             const countAdminPengurus = await prisma.pengurus_desa_anggota.count({
                 where: {
-                    akses_admin: true,
-                    NOT: {
-                        pengurus_desa_anggota_id: id,
-                    },
+                    akses_admin: 1,                    
                 },
             });
+            console.log({countAdminPengurus})
 
             if (countAdminPengurus <= 1) {
                 return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
@@ -234,18 +229,18 @@ exports.pengurusdesaanggotaakses = async (req, res) => {
                     pengurus_desa_anggota_id: id,
                 },
                 data: {
-                    akses_admin: false,
+                    akses_admin: 0,
                 },
             });
 
             return res.status(200).json({ status: 200, message: "Berhasil mencabut akses admin" });
-        } else if (akses_admin === 1) {
+        } else if (parseInt(akses_admin) === 1) {
             await prisma.pengurus_desa_anggota.update({
                 where: {
                     pengurus_desa_anggota_id: id,
                 },
                 data: {
-                    akses_admin: true,
+                    akses_admin: 1,
                 },
             });
 

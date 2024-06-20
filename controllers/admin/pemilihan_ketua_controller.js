@@ -272,7 +272,6 @@ exports.pemilihanketuaput = async (req, res) => {
         const existingPemilihan = await prisma.pemilihan_ketua.findMany({
             where: {
                 AND: [
-                    { pemilihan_ketua_id: { not: id } },
                     {
                         OR: [
                             {
@@ -476,7 +475,7 @@ exports.calonketuapost = async (req, res) => {
             return res.status(400).json({ status: 400, message: `Warga tersebut sudah menjadi calon ketua dalam pemilihan ketua yang sama` });
         }
 
-        const newCandidate = await prisma.calonKetua.create({
+        const newCandidate = await prisma.calon_ketua.create({
             data: {
                 pemilihan_ketua_id: parseInt(pemilihan_ketua_id),
                 warga_id: parseInt(warga_id),
@@ -554,7 +553,7 @@ exports.set_hak_pilih = async (req, res) => {
                 }
             },
             data: {
-                hak_pilih: true
+                hak_pilih: 1
             }
         });
 
