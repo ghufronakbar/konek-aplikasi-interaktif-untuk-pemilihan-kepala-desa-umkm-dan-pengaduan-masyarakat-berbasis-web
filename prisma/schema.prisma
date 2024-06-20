@@ -1,0 +1,122 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model akses_token {
+  id                       Int    @id @default(autoincrement())
+  warga_id                 Int?
+  pengurus_desa_anggota_id Int?
+  token                    String
+  ip_address               String @db.VarChar(20)
+}
+
+model berita {
+  berita_id Int        @id @default(autoincrement())
+  judul     String?    @db.VarChar(255)
+  subjudul  String?    @db.VarChar(255)
+  tanggal   DateTime   @default(now())
+  isi       String?    @db.Text
+  gambar    String?    @db.VarChar(255)
+  publikasi Int        @default(0)
+  prioritas Int        @default(0)
+  komentar  komentar[]
+}
+
+model calon_ketua {
+  calon_ketua_id     Int     @id @default(autoincrement())
+  pemilihan_ketua_id Int?
+  warga_id           Int?
+  deskripsi          String?
+  total_pemilih      Int?
+
+  pemilihan_ketua pemilihan_ketua? @relation(fields: [pemilihan_ketua_id], references: [pemilihan_ketua_id], onDelete: Cascade)
+  warga           warga?           @relation(fields: [warga_id], references: [warga_id], onDelete: Cascade)
+}
+
+model informasi_desa {
+  informasi_desa_id    Int     @id @default(autoincrement())
+  nama_desa            String? @db.VarChar(255)
+  deskripsi            String?
+  luas_lahan_pertanian Float?
+  lahan_peternakan     Float?
+}
+
+model jenis_umkm {
+  jenis_umkm_id   Int     @id @default(autoincrement())
+  nama_jenis_umkm String? @db.VarChar(255)
+  umkm            umkm[]
+}
+
+model komentar {
+  komentar_id Int      @id @default(autoincrement())
+  warga_id    Int?
+  isi         String?  @db.Text
+  tanggal     DateTime @default(now())
+  berita_id   Int?
+
+  berita berita? @relation(fields: [berita_id], references: [berita_id], onDelete: Cascade)
+  warga  warga?  @relation(fields: [warga_id], references: [warga_id], onDelete: Cascade)
+}
+
+model pemilihan_ketua {
+  pemilihan_ketua_id Int           @id @default(autoincrement())
+  tanggal_mulai      DateTime?
+  tanggal_selesai    DateTime?
+  judul              String?       @db.VarChar(255)
+  deskripsi          String?
+  calon_ketua        calon_ketua[]
+}
+
+model pengaduan_masyarakat {
+  pengaduan_masyarakat_id Int      @id @default(autoincrement())
+  warga_id                Int?
+  subjek                  String?  @db.VarChar(255)
+  isi                     String?  @db.Text
+  tanggal                 DateTime @default(now())
+
+  warga warga? @relation(fields: [warga_id], references: [warga_id], onDelete: Cascade)
+}
+
+model pengurus_desa_anggota {
+  pengurus_desa_anggota_id Int      @id @default(autoincrement())
+  warga_id                 Int?
+  jabatan                  String?  @db.VarChar(255)
+  akses_admin              Int? @default(0)
+  warga                    warga?   @relation(fields: [warga_id], references: [warga_id], onDelete: Cascade)
+}
+
+model umkm {
+  umkm_id       Int     @id @default(autoincrement())
+  nama          String? @db.VarChar(255)
+  jenis_umkm_id Int?
+  deskripsi     String?
+  gambar        String? @db.VarChar(255)
+  lokasi        String? @db.VarChar(255)
+  approve       Int? @default(0)
+  status        Int? @default(0)
+  warga_id      Int?
+
+  jenis_umkm jenis_umkm? @relation(fields: [jenis_umkm_id], references: [jenis_umkm_id], onDelete: Cascade)
+  warga      warga?      @relation(fields: [warga_id], references: [warga_id], onDelete: Cascade)
+}
+
+model warga {
+  warga_id              Int                     @id @default(autoincrement())
+  nik                   String                  @db.VarChar(20)
+  kk                    String?                 @db.VarChar(255)
+  nama_lengkap          String?                 @db.VarChar(255)
+  tanggal_lahir         DateTime?
+  foto                  String?                 @db.VarChar(255)
+  hak_pilih             Int?                 @default(0)
+  password              String                  @db.VarChar(80)
+  calon_ketua           calon_ketua[]
+  komentar              komentar[]
+  pengaduan_masyarakat  pengaduan_masyarakat[]
+  pengurus_desa_anggota pengurus_desa_anggota[]
+  umkm                  umkm[]
+}

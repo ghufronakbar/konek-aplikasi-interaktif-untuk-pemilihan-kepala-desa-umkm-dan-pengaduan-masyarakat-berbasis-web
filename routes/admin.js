@@ -48,7 +48,7 @@ module.exports = function (app) {
         .delete(VerificationPengurusDesa, ControllerPengurusDesa.komentar_controller.komentardelete);
 
 
-    // //PENGADUAN MASYARAKAT
+    //PENGADUAN MASYARAKAT
     app.route('/api/admin/pengaduanmasyarakat')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatjoin);
 
@@ -59,7 +59,7 @@ module.exports = function (app) {
         .delete(VerificationPengurusDesa, ControllerPengurusDesa.pengaduan_masyarakat_controller.pengaduanmasyarakatdelete);
 
 
-    // //PENGURUS DESA
+    //PENGURUS DESA
     app.route('/api/admin/pengurusdesa')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.detailpengurus);
 
@@ -79,7 +79,7 @@ module.exports = function (app) {
         .put(VerificationPengurusDesa, ControllerPengurusDesa.pengurus_desa_controller.pengurusdesaanggotaakses);
 
 
-    // //UMKM
+    //UMKM
     app.route('/api/admin/umkm')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmjoin);
 
@@ -93,7 +93,7 @@ module.exports = function (app) {
         .put(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.umkmputapprove);
 
 
-    // //JENIS UMKM
+    //JENIS UMKM
     app.route('/api/admin/jenisumkm')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.umkm_controller.jenisumkm);
 
@@ -111,7 +111,7 @@ module.exports = function (app) {
 
 
 
-    // //WARGA
+    //WARGA
     app.route('/api/admin/warga')
         .get(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.warga);
 
@@ -126,10 +126,6 @@ module.exports = function (app) {
 
     app.route('/api/admin/warga/add')
         .post(VerificationPengurusDesa, ControllerPengurusDesa.warga_controller.wargapost);
-
-
-
-
 
 
     //PEMILIHAN KETUA

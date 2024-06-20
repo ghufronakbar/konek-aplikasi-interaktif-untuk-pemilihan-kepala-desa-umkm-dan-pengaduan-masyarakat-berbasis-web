@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `berita` MODIFY `publikasi` INTEGER NOT NULL DEFAULT 0,
+    MODIFY `prioritas` INTEGER NOT NULL DEFAULT 0;

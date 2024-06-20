@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `umkm` MODIFY `approve` INTEGER NULL DEFAULT 0,
+    MODIFY `status` INTEGER NULL DEFAULT 0;

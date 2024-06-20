@@ -1,231 +1,260 @@
 'use strict';
 
-const connection = require('../../connection');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-
-// JOIN PENGURUS DESA
 exports.detailpengurus = async (req, res) => {
-    connection.query(`SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, 
-                        warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, 
-                        pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin 
-                        FROM pengurus_desa_anggota JOIN warga 
-                        WHERE pengurus_desa_anggota.warga_id = warga.warga_id 
-                        ORDER BY pengurus_desa_anggota.pengurus_desa_anggota_id;`,
-        (error, rows, fields) => {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({ status: 500, message: "Internal Server Error" });
-            } else {
-                // Membentuk array response baru menggunakan forEach
-                let response = [];
-                rows.forEach(row => {
-                    response.push({
-                        pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
-                        warga_id: row.warga_id,
-                        nik: row.nik,
-                        nama_lengkap: row.nama_lengkap,
-                        tanggal_lahir: row.tanggal_lahir,
-                        foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
-                        jabatan: row.jabatan,
-                        akses_admin: row.akses_admin
-                    });
-                });
-                return res.status(200).json({ status: 200, values: response });
-            };
+    try {
+        const pengurus = await prisma.pengurus_desa_anggota.findMany({
+            select: {
+                pengurus_desa_anggota_id: true,
+                warga_id: true,
+                warga: {
+                    select: {
+                        nik: true,
+                        nama_lengkap: true,
+                        tanggal_lahir: true,
+                        foto: true,
+                    },
+                },
+                jabatan: true,
+                akses_admin: true,
+            },
+            orderBy: {
+                pengurus_desa_anggota_id: 'asc',
+            },
         });
+        const response = pengurus.map(row => ({
+            pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
+            warga_id: row.warga_id,
+            nik: row.warga.nik,
+            nama_lengkap: row.warga.nama_lengkap,
+            tanggal_lahir: row.warga.tanggal_lahir.toISOString(),
+            foto: row.warga.foto ? process.env.BASE_URL + `/warga/` + row.warga.foto : process.env.BASE_URL + `/default/profile.png`,
+            jabatan: row.jabatan,
+            akses_admin: row.akses_admin,
+        }));
+
+        return res.status(200).json({ status: 200, values: response });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
+    }
 };
+
+
 
 exports.detailpengurusid = async (req, res) => {
-    const id = req.params.id
-    connection.query(`SELECT pengurus_desa_anggota.pengurus_desa_anggota_id, warga.warga_id, 
-                        warga.nik, warga.nama_lengkap, warga.tanggal_lahir, warga.foto, 
-                        pengurus_desa_anggota.jabatan, pengurus_desa_anggota.akses_admin 
-                        FROM pengurus_desa_anggota JOIN warga 
-                        WHERE pengurus_desa_anggota.warga_id = warga.warga_id 
-                        AND pengurus_desa_anggota.pengurus_desa_anggota_id=?`, id,
-        (error, rows, fields) => {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({ status: 500, message: "Internal Server Error" });
-            } else {
-                // Membentuk array response baru menggunakan forEach
-                let response = [];
-                rows.forEach(row => {
-                    response.push({
-                        pengurus_desa_anggota_id: row.pengurus_desa_anggota_id,
-                        warga_id: row.warga_id,
-                        nik: row.nik,
-                        nama_lengkap: row.nama_lengkap,
-                        tanggal_lahir: row.tanggal_lahir,
-                        foto: row.foto ? process.env.BASE_URL + `/warga/` + row.foto : process.env.BASE_URL + `/default/profile.png`,
-                        jabatan: row.jabatan,
-                        akses_admin: row.akses_admin
-                    });
-                });
-                return res.status(200).json({ status: 200, values: response });
-            };
+    const id = parseInt(req.params.id);
+
+    try {
+        const pengurus = await prisma.pengurus_desa_anggota.findUnique({
+            where: {
+                pengurus_desa_anggota_id: id,
+            },
+            select: {
+                pengurus_desa_anggota_id: true,
+                warga_id: true,
+                warga: {
+                    select: {
+                        nik: true,
+                        nama_lengkap: true,
+                        tanggal_lahir: true,
+                        foto: true,
+                    },
+                },
+                jabatan: true,
+                akses_admin: true,
+            },
         });
+
+        if (!pengurus) {
+            return res.status(404).json({ status: 404, message: "Pengurus tidak ditemukan" });
+        }
+
+        const response = {
+            pengurus_desa_anggota_id: pengurus.pengurus_desa_anggota_id,
+            warga_id: pengurus.warga_id,
+            nik: pengurus.warga.nik,
+            nama_lengkap: pengurus.warga.nama_lengkap,
+            tanggal_lahir: pengurus.warga.tanggal_lahir.toISOString(),
+            foto: pengurus.warga.foto ? process.env.BASE_URL + `/warga/` + pengurus.warga.foto : process.env.BASE_URL + `/default/profile.png`,
+            jabatan: pengurus.jabatan,
+            akses_admin: pengurus.akses_admin,
+        };
+
+        return res.status(200).json({ status: 200, values: [response] });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
+    }
 };
 
-
-//POST PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotapost = async (req, res) => {
-    const warga_id = req.body.warga_id;
-    const jabatan = req.body.jabatan;
+    const { warga_id, jabatan } = req.body;
 
-    if(!warga_id ){
-        return res.status(400).json({ status: 400, message: "Pilih warga terlebih dahulu" })
-    }
-    if (!jabatan) {
-        return res.status(400).json({ status: 400, message: "Field tidak boleh kosong" })
-    }
-    const qValidation = `SELECT pengurus_desa_anggota_id FROM pengurus_desa_anggota WHERE warga_id=?`
-    connection.query(qValidation, warga_id,
-        (error, rows) => {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({ status: 500, message: "Internal Server Error" })
-            } else {
-                if (rows.length > 0) {
-                    return res.status(400).json({ status: 200, message: "Warga ini sudah menajdi pengurus desa" })
-                } else {
-                    connection.query('INSERT INTO pengurus_desa_anggota (warga_id, jabatan, akses_admin) VALUES (?,?,?)',
-                        [warga_id, jabatan, 0],
-                        (error, rows, fields) => {
-                            if (error) {
-                                console.log(error);
-                                return res.status(500).json({ status: 500, message: "Internal Server Error" })
-                            } else {
-                                return res.status(200).json({ status: 200, message: "Pengurus desa berhasil ditambahkan" })
-                            };
-                        })
-                }
-            }
+    try {
+        if (!warga_id) {
+            return res.status(400).json({ status: 400, message: "Pilih warga terlebih dahulu" });
         }
-    )
+        if (!jabatan) {
+            return res.status(400).json({ status: 400, message: "Field tidak boleh kosong" });
+        }
+
+        const existingPengurus = await prisma.pengurus_desa_anggota.findFirst({
+            where: {
+                warga_id: parseInt(warga_id),
+            },
+        });
+
+        if (existingPengurus) {
+            return res.status(400).json({ status: 400, message: "Warga ini sudah menjadi pengurus desa" });
+        }
+
+        await prisma.pengurus_desa_anggota.create({
+            data: {
+                warga_id: parseInt(warga_id),
+                jabatan: jabatan,
+            },
+        });
+
+        return res.status(200).json({ status: 200, message: "Pengurus desa berhasil ditambahkan" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
+    }
 };
 
-//PUT PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotaput = async (req, res) => {
-    const id = req.params.id;
-    const jabatan = req.body.jabatan;
+    const id = parseInt(req.params.id);
+    const { jabatan } = req.body;
 
-    if (!jabatan) {
-        return res.status(400).json({ status: 400, message: "Jabatan tidak boleh kosong" })
+    try {
+        if (!jabatan) {
+            return res.status(400).json({ status: 400, message: "Jabatan tidak boleh kosong" });
+        }
+
+        const updatedPengurus = await prisma.pengurus_desa_anggota.update({
+            where: {
+                pengurus_desa_anggota_id: id,
+            },
+            data: {
+                jabatan: jabatan,
+            },
+        });
+
+        if (updatedPengurus) {
+            return res.status(200).json({ status: 200, message: "Jabatan berhasil diedit" });
+        } else {
+            return res.status(404).json({ status: 404, message: "Pengurus desa tidak ditemukan" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
     }
-
-    connection.query('UPDATE pengurus_desa_anggota SET jabatan=?WHERE pengurus_desa_anggota_id=?',
-        [jabatan, id],
-        (error, rows, fields) => {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({ status: 500, message: "Internal Server Error" });
-            } else {
-                console.log(error)
-                return res.status(200).json({ status: 200, message: "Jabatan berhasil diedit" })
-            };
-        })
 };
 
-//DEconstE PENGURUS DESA ANGGOTA
 exports.pengurusdesaanggotadelete = async (req, res) => {
-    const id = req.params.id;
+    const id = parseInt(req.params.id);
 
-    const qValidationPengurusDesa = `SELECT pengurus_desa_anggota_id,akses_admin FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?`
-    connection.query(qValidationPengurusDesa, id,
-        (error, rows, fields) => {
-            if (error) {
-                console.log(error);
-                return res.status(500).json({ status: 500, message: "Internal Server Error" });
-            } else {
-                const { akses_admin } = rows[0]
-                if (akses_admin == 0) {
-                    connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
-                        [id],
-                        (error, rows, fields) => {
-                            if (error) {
-                                console.log(error);
-                                return res.status(500).json({ status: 500, message: "Internal Server Error" })
-                            } else {
-                                return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" })
-                            };
-                        })
-                }else{
-                    const qValidationAksesAdmin = `SELECT pengurus_desa_anggota_id FROM pengurus_desa_anggota WHERE akses_admin=1`
-                    connection.query(qValidationAksesAdmin,
-                        (error, rows, fields) => {
-                            if (error) {
-                                console.log(error);
-                                return res.status(500).json({ status: 500, message: "Internal Server Error" });
-                            } else {
-                                if (rows.length <= 1) {
-                                    return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
-                                } else {
-                                    connection.query('DELETE FROM pengurus_desa_anggota WHERE pengurus_desa_anggota_id=?',
-                                    [id],
-                                    (error, rows, fields) => {
-                                        if (error) {
-                                            console.log(error);
-                                            return res.status(500).json({ status: 500, message: "Internal Server Error" })
-                                        } else {
-                                            return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" })
-                                        };
-                                    })
-                                }
-                            }
-                        }
-                    )
-                }
-            }
+    try {
+        const pengurus = await prisma.pengurus_desa_anggota.findUnique({
+            where: {
+                pengurus_desa_anggota_id: id,
+            },
+            select: {
+                pengurus_desa_anggota_id: true,
+                akses_admin: true,
+            },
+        });
+
+        if (!pengurus) {
+            return res.status(404).json({ status: 404, message: "Pengurus desa tidak ditemukan" });
         }
-    )
-}
+
+        const { akses_admin } = pengurus;
+
+        if (akses_admin === 0) {
+            await prisma.pengurus_desa_anggota.delete({
+                where: {
+                    pengurus_desa_anggota_id: id,
+                },
+            });
+            return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" });
+        } else {
+            const countAdminPengurus = await prisma.pengurus_desa_anggota.count({
+                where: {
+                    akses_admin: true,
+                    NOT: {
+                        pengurus_desa_anggota_id: id,
+                    },
+                },
+            });
+
+            if (countAdminPengurus <= 1) {
+                return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
+            }
+
+            await prisma.pengurus_desa_anggota.delete({
+                where: {
+                    pengurus_desa_anggota_id: id,
+                },
+            });
+            return res.status(200).json({ status: 200, message: "Berhasil menghapus pengurus desa" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
+    }
+};
 
 //SET AKSES PENGURUS DESA ANGGOTA
+
 exports.pengurusdesaanggotaakses = async (req, res) => {
-    const id = req.params.id;
-    const akses_admin = req.body.akses_admin;
+    const id = parseInt(req.params.id);
+    const { akses_admin } = req.body;
 
-    if (akses_admin == 0) {
-        const qValidation = `SELECT pengurus_desa_anggota_id FROM pengurus_desa_anggota WHERE akses_admin=1`
-        connection.query(qValidation,
-            (error, rows, fields) => {
-                if (error) {
-                    console.log(error);
-                    return res.status(500).json({ status: 500, message: "Internal Server Error" });
-                } else {
-                    if (rows.length <= 1) {
-                        return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
-                    } else {
-                        connection.query('UPDATE pengurus_desa_anggota SET akses_admin=0 WHERE pengurus_desa_anggota_id=?',
-                            [id],
-                            (error, rows, fields) => {
-                                if (error) {
-                                    console.log(error);
-                                    return res.status(500).json({ status: 500, message: "Internal Server Error" });
-                                } else {
-                                    console.log(error)
-                                    return res.status(200).json({ status: 200, message: "Berhasil mencabut akses admin" })
-                                };
-                            })
-                    }
-                }
+    try {
+        if (akses_admin === 0) {
+            const countAdminPengurus = await prisma.pengurus_desa_anggota.count({
+                where: {
+                    akses_admin: true,
+                    NOT: {
+                        pengurus_desa_anggota_id: id,
+                    },
+                },
+            });
+
+            if (countAdminPengurus <= 1) {
+                return res.status(400).json({ status: 400, message: "Minimal harus ada satu pengurus desa yang memiliki akses admin" });
             }
-        )
 
-    } else if (akses_admin == 1) {
-        connection.query('UPDATE pengurus_desa_anggota SET akses_admin=1 WHERE pengurus_desa_anggota_id=?',
-            [id],
-            (error, rows, fields) => {
-                if (error) {
-                    console.log(error);
-                    return res.status(500).json({ status: 500, message: "Internal Server Error" });
-                } else {
-                    console.log(error)
-                    return res.status(200).json({ status: 200, message: "Berhasil memberi akses admin" })
+            await prisma.pengurus_desa_anggota.update({
+                where: {
+                    pengurus_desa_anggota_id: id,
+                },
+                data: {
+                    akses_admin: false,
+                },
+            });
 
-                };
-            })
+            return res.status(200).json({ status: 200, message: "Berhasil mencabut akses admin" });
+        } else if (akses_admin === 1) {
+            await prisma.pengurus_desa_anggota.update({
+                where: {
+                    pengurus_desa_anggota_id: id,
+                },
+                data: {
+                    akses_admin: true,
+                },
+            });
+
+            return res.status(200).json({ status: 200, message: "Berhasil memberi akses admin" });
+        } else {
+            return res.status(400).json({ status: 400, message: "Akses admin hanya bisa bernilai 0 atau 1" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ status: 500, message: "Internal Server Error" });
     }
-
 };

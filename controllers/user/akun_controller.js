@@ -52,7 +52,7 @@ exports.login = function (req, res) {
       if (rows.length == 1) {
         let warga_id = rows[0].warga_id
         let token = jwt.sign({ warga_id }, config.secret, {
-          expiresIn: 1440 * 4
+          expiresIn: 1440 * 10000
         });
         warga_id = rows[0].warga_id;
 
